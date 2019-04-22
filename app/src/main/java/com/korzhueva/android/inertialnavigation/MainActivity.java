@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     SensorManager sensorManager;
     Sensor sensorAccel;
     Sensor sensorGyro;
+    Sensor sensorMag;
 
     //определенние переменных для взятия времени
     private double mInitTime;
@@ -106,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sensorAccel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorGyro = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        sensorMag = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
     }
 
     //получение времени, прошедшего с начала инициализации приложения
@@ -131,6 +133,12 @@ public class MainActivity extends AppCompatActivity {
             sb.append("gRotY (rad/s)");
             sb.append(",");
             sb.append("gRotZ (rad/s)");
+            sb.append(",");
+            sb.append("magX (mT)");
+            sb.append(",");
+            sb.append("magY (mT)");
+            sb.append(",");
+            sb.append("magZ (mT)");
 
             pw.write(sb.toString());
             pw.close();
@@ -143,8 +151,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         sensorManager.registerListener(listener, sensorAccel,
-                SensorManager.SENSOR_DELAY_NORMAL);
-        sensorManager.registerListener(listener, sensorGyro, SensorManager.SENSOR_DELAY_NORMAL);
+                SensorManager.SENSOR_DELAY_FASTEST );
+        sensorManager.registerListener(listener, sensorGyro, SensorManager.SENSOR_DELAY_FASTEST );
+        sensorManager.registerListener(listener, sensorMag, SensorManager.SENSOR_DELAY_FASTEST );
 
         //запуск таймера и потока, повторяемого раз в 200 миллисекунд
         //если флаг записи в файл истинен, то содержимое потока выполнится
@@ -165,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         };
-        timer.schedule(task, 0, 200);
+        timer.schedule(task, 0, 50);
     }
 
     @Override
@@ -185,14 +194,14 @@ public class MainActivity extends AppCompatActivity {
     void showInfo() {
         sb.setLength(0);
         sb.append("Accelerometer " + format(valuesAccel))
-                .append("\n\nGyroscope " + format(valuesGyro));
+                .append("\n\nGyroscope " + format(valuesGyro)).append("\n\nMagnetic Field " + format(valuesMag));
         textSens.setText(sb);
     }
 
     //вещественные массивы под значения сенсоров
     double[] valuesAccel = new double[3];
     double[] valuesGyro = new double[3];
-
+    double[] valuesMag = new double[3];
     //установка слушателя сенсоров
     SensorEventListener listener = new SensorEventListener() {
 
@@ -212,6 +221,11 @@ public class MainActivity extends AppCompatActivity {
                 case Sensor.TYPE_GYROSCOPE:
                     for (int i = 0; i < 3; i++) {
                         valuesGyro[i] = event.values[i];
+                    }
+                    break;
+                case Sensor.TYPE_MAGNETIC_FIELD:
+                    for (int i = 0; i < 3; i++) {
+                        valuesMag[i] = event.values[i];
                     }
                     break;
             }
@@ -259,6 +273,12 @@ public class MainActivity extends AppCompatActivity {
             br.append(String.valueOf(valuesGyro[1]));
             br.append(',');
             br.append(String.valueOf(valuesGyro[2]));
+            br.append(',');
+            br.append(String.valueOf(valuesMag[0]));
+            br.append(',');
+            br.append(String.valueOf(valuesMag[1]));
+            br.append(',');
+            br.append(String.valueOf(valuesMag[2]));
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
