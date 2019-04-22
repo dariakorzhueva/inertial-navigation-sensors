@@ -143,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
             pw.write(sb.toString());
             pw.close();
         } catch (IOException e) {
+
             e.printStackTrace();
         }
     }
@@ -154,7 +155,6 @@ public class MainActivity extends AppCompatActivity {
                 SensorManager.SENSOR_DELAY_FASTEST );
         sensorManager.registerListener(listener, sensorGyro, SensorManager.SENSOR_DELAY_FASTEST );
         sensorManager.registerListener(listener, sensorMag, SensorManager.SENSOR_DELAY_FASTEST );
-
         //запуск таймера и потока, повторяемого раз в 200 миллисекунд
         //если флаг записи в файл истинен, то содержимое потока выполнится
         //в противном случае нет
