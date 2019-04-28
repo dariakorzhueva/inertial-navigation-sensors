@@ -1,2 +1,8 @@
 ﻿# InertialNavigationAndroid
-In progress.
+Added:
+* accelerometr
+* gyroscope
+* magnitometr
+
+Planning:
+* Kalman filter
