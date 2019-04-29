@@ -7,6 +7,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -45,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     //определенние переменных для взятия времени
     private double mInitTime;
     private double sensTime;
-    Timer timer;
+    Timer timer, timer1;
 
     //определение переменных для записи показаний в файл
     private static String FILE_NAME = "sensorsValues";
@@ -71,6 +74,49 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 flagStatus = true;
                 textStatus.setText("Началась запись в файл " + FILE_NAME);
+
+                // Часть, которая записывает данные после сигнала - перезаписывает то, что было до
+                // Перезаписывает, так как writeValues пересоздаёт файл при её вызове
+                // Нужно как-то переписать эту функцию, чтобы файл не создавался каждый раз, а дописывался
+                // Пока не знаю как
+//                timer1 = new Timer();
+//                TimerTask task2 = new TimerTask() {
+//                    @Override
+//                    public void run() {
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                if (flagStatus) {
+//                                    sensTime = getDeltaT() / 1000;
+//                                    writeValues();
+//                                }
+//                            }
+//                        });
+//                    }
+//                };
+//                timer1.schedule(task2, 0, 50);
+//
+//                timer1.cancel();
+
+                // Спустя 5 секунд срабатывает сигнал - начинайте движение
+                timer = new Timer();
+
+                TimerTask task1 = new TimerTask(){
+                    @Override
+                    public void run() {
+                        if (flagStatus) {
+                            try {
+                                Uri notify = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                                Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notify);
+                                r.play();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                };
+                timer.schedule(task1, 5000);
+
             }
         };
 
@@ -158,6 +204,33 @@ public class MainActivity extends AppCompatActivity {
         //запуск таймера и потока, повторяемого раз в 200 миллисекунд
         //если флаг записи в файл истинен, то содержимое потока выполнится
         //в противном случае нет
+
+//        try {
+//            Uri notify = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+//            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notify);
+//            r.play();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
+//        timer = new Timer();
+//
+//        TimerTask task1 = new TimerTask(){
+//            @Override
+//            public void run() {
+//                if (flagStatus) {
+//                    try {
+//                        Uri notify = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+//                        Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notify);
+//                        r.play();
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        };
+//        timer.schedule(task1, 5000);
+//
         timer = new Timer();
         TimerTask task = new TimerTask() {
             @Override
