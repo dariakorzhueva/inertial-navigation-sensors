@@ -1,6 +1,5 @@
 package com.korzhueva.android.inertialnavigation;
 
-
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
@@ -11,6 +10,7 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -32,98 +32,98 @@ import java.util.TimerTask;
 import android.view.View.OnClickListener;
 
 public class MainActivity extends AppCompatActivity {
-    //определение элементов управления
+
+    // Определение элементов управления
     Button startButton;
     Button stopButton;
     TextView textSens;
     TextView textStatus;
     TextView textWarning;
 
-    //определение сенсоров
+    // Оопределение датчиков
     SensorManager sensorManager;
     Sensor sensorAccel;
     Sensor sensorGyro;
     Sensor sensorMag;
 
-    //определенние переменных для взятия времени
+    // Определенние переменных для взятия времени
     private double mInitTime;
     private double sensTime;
-    Timer timer, timer1;
+    Timer timer;
 
-    //определение переменных для записи показаний в файл
+    // Определение переменных для записи показаний в файл
     private static String FILE_NAME = "sensorsValues";
     private static String FILE_PATH = "";
     StringBuilder sb = new StringBuilder();
     private static final int REQUEST_PERMISSION_WRITE = 1001;
     private boolean permissionGranted;
 
-    //метка для начала/остановки записи в файл
+    // Метка для начала/остановки записи в файл
     private boolean flagStatus = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //показ интерфейса и иницилизация Button
+
+        // Показ интерфейса и иницилизация Button
         setContentView(R.layout.activity_main);
         startButton = (Button) findViewById(R.id.startButton);
         stopButton = (Button) findViewById(R.id.stopButton);
+        stopButton.setEnabled(false);
 
-        //установка слушателей кнопок
+        // Установка слушателя кнопки Старт
         OnClickListener listenerStart = new OnClickListener() {
             @Override
             public void onClick(View v) {
+                startButton.setEnabled(false);
+                stopButton.setEnabled(true);
+                createTableHead();
+
+                // Запись показаний разрешена
                 flagStatus = true;
-                textStatus.setText("Началась запись в файл " + FILE_NAME);
 
-                // Часть, которая записывает данные после сигнала - перезаписывает то, что было до
-                // Перезаписывает, так как writeValues пересоздаёт файл при её вызове
-                // Нужно как-то переписать эту функцию, чтобы файл не создавался каждый раз, а дописывался
-                // Пока не знаю как
-//                timer1 = new Timer();
-//                TimerTask task2 = new TimerTask() {
-//                    @Override
-//                    public void run() {
-//                        runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                if (flagStatus) {
-//                                    sensTime = getDeltaT() / 1000;
-//                                    writeValues();
-//                                }
-//                            }
-//                        });
-//                    }
-//                };
-//                timer1.schedule(task2, 0, 50);
-//
-//                timer1.cancel();
-
-                // Спустя 5 секунд срабатывает сигнал - начинайте движение
-                timer = new Timer();
-
-                TimerTask task1 = new TimerTask(){
-                    @Override
+                // Задержка в 0,5 секунд для сбора показаний для калибровки
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
                     public void run() {
-                        if (flagStatus) {
-                            try {
-                                Uri notify = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                                Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notify);
-                                r.play();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
+                        calibration();
                     }
-                };
-                timer.schedule(task1, 5000);
+                }, 500);
 
+                textStatus.setText("Началась запись в файл " + FILE_NAME);
             }
         };
 
+        // Установка слушателя кнопки Стоп
         OnClickListener listenerStop = new OnClickListener() {
             @Override
             public void onClick(View v) {
+                startButton.setEnabled(true);
+                stopButton.setEnabled(false);
+
+                // Запись показаний запрещена
                 flagStatus = false;
+
+                File file = new File(FILE_PATH);
+                FileWriter fr = null;
+                BufferedWriter br = null;
+                try {
+                    fr = new FileWriter(file, true);
+                    br = new BufferedWriter(fr);
+                    br.newLine();
+                    br.append("Stop of motion recording");
+                    br.newLine();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        br.close();
+                        fr.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
                 textStatus.setText("Запись в файл " + FILE_NAME + " приостановлена");
             }
         };
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
         startButton.setOnClickListener(listenerStart);
         stopButton.setOnClickListener(listenerStop);
 
-        //проверка разрешения на запись в файл
+        // Проверка разрешения на запись в файл
         if (!permissionGranted)
             checkPermissions();
 
@@ -139,58 +139,116 @@ public class MainActivity extends AppCompatActivity {
 
         textWarning = findViewById(R.id.textWarning);
         textStatus = findViewById(R.id.textStatus);
-        textWarning.setText("Запустите сенсоры кнопкой \"Старт\"\nОстановите сенсоры кнопкой \"Стоп\"");
+        textWarning.setText("Старт - запуск считывания\nСтоп - прерывание считывания\nПосле звукового сигнала начинайте движение");
 
-        //создание шапки таблицы
-        createTableHead();
-
-        //получение текущего времени
+        // Получение текущего времени
         mInitTime = System.currentTimeMillis();
 
         textSens = (TextView) findViewById(R.id.textSens);
 
-        //получение сенсоров
+        // Получение показаний с датчиокв
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sensorAccel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorGyro = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         sensorMag = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
     }
 
-    //получение времени, прошедшего с начала инициализации приложения
+    // Получение времени, прошедшего с начала инициализации приложения
     private double getDeltaT() {
         return System.currentTimeMillis() - mInitTime;
     }
 
-    //формирование шапки таблицы с показаниями сенсоров
-    public void createTableHead() {
+    // Калибровка показаний датчиков
+    public void calibration(){
         try {
-            PrintWriter pw = new PrintWriter(new File(FILE_PATH));
-            StringBuilder sb = new StringBuilder();
-            sb.append("Time (s)");
-            sb.append(",");
-            sb.append("aAxisX (m/s2)");
-            sb.append(",");
-            sb.append("aAxisY (m/s2)");
-            sb.append(",");
-            sb.append("aAxisZ (m/s2)");
-            sb.append(",");
-            sb.append("gRotX (rad/s)");
-            sb.append(",");
-            sb.append("gRotY (rad/s)");
-            sb.append(",");
-            sb.append("gRotZ (rad/s)");
-            sb.append(",");
-            sb.append("magX (mT)");
-            sb.append(",");
-            sb.append("magY (mT)");
-            sb.append(",");
-            sb.append("magZ (mT)");
+            // Запись в файл разделителя для разграничения калибровочных и последующих показний
+            File file = new File(FILE_PATH);
+            FileWriter fr = null;
+            BufferedWriter br = null;
+            try {
+                fr = new FileWriter(file, true);
+                br = new BufferedWriter(fr);
+                br.newLine();
+                br.append("Start of motion recording");
+                br.newLine();
+                br.append("Time (s)");
+                br.append(",");
+                br.append("aAxisX (m/s2)");
+                br.append(",");
+                br.append("aAxisY (m/s2)");
+                br.append(",");
+                br.append("aAxisZ (m/s2)");
+                br.append(",");
+                br.append("gRotX (rad/s)");
+                br.append(",");
+                br.append("gRotY (rad/s)");
+                br.append(",");
+                br.append("gRotZ (rad/s)");
+                br.append(",");
+                br.append("magX (mT)");
+                br.append(",");
+                br.append("magY (mT)");
+                br.append(",");
+                br.append("magZ (mT)");
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    br.close();
+                    fr.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
 
-            pw.write(sb.toString());
-            pw.close();
-        } catch (IOException e) {
+            // Подаётся сигнал, позволяющий начать движение
+            Uri notify = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notify);
+            r.play();
 
+        } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    // Формирование шапки таблицы с показаниями датчиков
+    public void createTableHead() {
+        File file = new File(FILE_PATH);
+        FileWriter fr = null;
+        BufferedWriter br = null;
+        try {
+            fr = new FileWriter(file, true);
+            br = new BufferedWriter(fr);
+            br.append("Calibration");
+            br.newLine();
+            br.append("Time (s)");
+            br.append(",");
+            br.append("aAxisX (m/s2)");
+            br.append(",");
+            br.append("aAxisY (m/s2)");
+            br.append(",");
+            br.append("aAxisZ (m/s2)");
+            br.append(",");
+            br.append("gRotX (rad/s)");
+            br.append(",");
+            br.append("gRotY (rad/s)");
+            br.append(",");
+            br.append("gRotZ (rad/s)");
+            br.append(",");
+            br.append("magX (mT)");
+            br.append(",");
+            br.append("magY (mT)");
+            br.append(",");
+            br.append("magZ (mT)");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                br.close();
+                fr.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -201,36 +259,10 @@ public class MainActivity extends AppCompatActivity {
                 SensorManager.SENSOR_DELAY_FASTEST );
         sensorManager.registerListener(listener, sensorGyro, SensorManager.SENSOR_DELAY_FASTEST );
         sensorManager.registerListener(listener, sensorMag, SensorManager.SENSOR_DELAY_FASTEST );
-        //запуск таймера и потока, повторяемого раз в 200 миллисекунд
-        //если флаг записи в файл истинен, то содержимое потока выполнится
-        //в противном случае нет
+        // Запуск таймера и потока, повторяемого раз в 200 миллисекунд
+        // Если флаг записи в файл истинен, то содержимое потока выполнится
+        // В противном случае - не выполняется
 
-//        try {
-//            Uri notify = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-//            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notify);
-//            r.play();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-
-//        timer = new Timer();
-//
-//        TimerTask task1 = new TimerTask(){
-//            @Override
-//            public void run() {
-//                if (flagStatus) {
-//                    try {
-//                        Uri notify = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-//                        Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notify);
-//                        r.play();
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        };
-//        timer.schedule(task1, 5000);
-//
         timer = new Timer();
         TimerTask task = new TimerTask() {
             @Override
@@ -257,74 +289,8 @@ public class MainActivity extends AppCompatActivity {
         timer.cancel();
     }
 
-    //формирование строки для вывода на экран
-    String format(double values[]) {
-        return String.format(" \nTIME: %1$.3f\nX: %2$.8f\t\tY: %3$.8f\t\tZ: %4$.8f ", sensTime, values[0], values[1],
-                values[2]);
-    }
-
-    //вывод информации на экран
-    void showInfo() {
-        sb.setLength(0);
-        sb.append("Accelerometer " + format(valuesAccel))
-                .append("\n\nGyroscope " + format(valuesGyro)).append("\n\nMagnetic Field " + format(valuesMag));
-        textSens.setText(sb);
-    }
-
-    //вещественные массивы под значения сенсоров
-    double[] valuesAccel = new double[3];
-    double[] valuesGyro = new double[3];
-    double[] valuesMag = new double[3];
-    //установка слушателя сенсоров
-    SensorEventListener listener = new SensorEventListener() {
-
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        }
-
-        @Override
-        public void onSensorChanged(SensorEvent event) {
-            //в зависимости от типа сенсора берутся его значения
-            switch (event.sensor.getType()) {
-                case Sensor.TYPE_ACCELEROMETER:
-                    for (int i = 0; i < 3; i++) {
-                        valuesAccel[i] = event.values[i];
-                    }
-                    break;
-                case Sensor.TYPE_GYROSCOPE:
-                    for (int i = 0; i < 3; i++) {
-                        valuesGyro[i] = event.values[i];
-                    }
-                    break;
-                case Sensor.TYPE_MAGNETIC_FIELD:
-                    for (int i = 0; i < 3; i++) {
-                        valuesMag[i] = event.values[i];
-                    }
-                    break;
-            }
-
-        }
-
-    };
-
-    //получение пути, куда буду записаны показания
-    //по умолчанию файл будет записан во внутреннюю память (при полученном разрешении на запись)
-    //маска итогового файла: sensorsValues XXXX.XX.XX XX-XX-XX.csv
-    private void getExternalPath() {
-        //получение пути до внутренней памяти
-        File storage = Environment.getExternalStorageDirectory();
-        String store = storage.getAbsolutePath();
-
-        //получение текущей даты и времени
-        DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH-mm-ss");
-        Date date = new Date();
-
-        FILE_NAME = FILE_NAME + " " + dateFormat.format(date) + ".csv";
-        FILE_PATH = storage + "/" + FILE_NAME;
-    }
-
-    //запись показаний сенсоров
-    //где запятые - парсеры для csv-файла
+    // Запись данных с датчиков
+    // Где запятые - парсеры для csv-файла
     public void writeValues() {
         File file = new File(FILE_PATH);
         FileWriter fr = null;
@@ -365,35 +331,107 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //Проверка на доступность внешнего хранилища для чтения
+    // Формирование строки для вывода на экран
+    String format(double values[]) {
+        return String.format(" \nTIME: %1$.3f\nX: %2$.8f\t\tY: %3$.8f\t\tZ: %4$.8f ", sensTime, values[0], values[1],
+                values[2]);
+    }
+
+    // Вывод информации на экран
+    void showInfo() {
+        sb.setLength(0);
+        sb.append("\nAccelerometer " + format(valuesAccel))
+                .append("\n\nGyroscope " + format(valuesGyro)).append("\n\nMagnetic Field " + format(valuesMag)+"\n");
+        textSens.setText(sb);
+    }
+
+    // Вещественные массивы под показания датчиков
+    double[] valuesAccel = new double[3];
+    double[] valuesGyro = new double[3];
+    double[] valuesMag = new double[3];
+
+    // Установка слушателя датчиков
+    SensorEventListener listener = new SensorEventListener() {
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        }
+
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            // В зависимости от типа датчика снимаются его показания
+            switch (event.sensor.getType()) {
+                // Акселерометр
+                case Sensor.TYPE_ACCELEROMETER:
+                    for (int i = 0; i < 3; i++) {
+                        valuesAccel[i] = event.values[i];
+                    }
+                    break;
+
+                // Гироскоп
+                case Sensor.TYPE_GYROSCOPE:
+                    for (int i = 0; i < 3; i++) {
+                        valuesGyro[i] = event.values[i];
+                    }
+                    break;
+
+                // Магнитометр
+                case Sensor.TYPE_MAGNETIC_FIELD:
+                    for (int i = 0; i < 3; i++) {
+                        valuesMag[i] = event.values[i];
+                    }
+                    break;
+            }
+
+        }
+
+    };
+
+    // Получение пути, куда буду записаны показания
+    // По умолчанию файл будет записан во внутреннюю память (при полученном разрешении на запись)
+    // Маска итогового файла: sensorsValues XXXX.XX.XX XX-XX-XX.csv
+    private void getExternalPath() {
+        //получение пути до внутренней памяти
+        File storage = Environment.getExternalStorageDirectory();
+
+        // Получение текущей даты и времени
+        DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH-mm-ss");
+        Date date = new Date();
+
+        FILE_NAME = FILE_NAME + " " + dateFormat.format(date) + ".csv";
+        FILE_PATH = storage + "/" + FILE_NAME;
+    }
+
+    // Проверка на доступность внешнего хранилища для чтения
     public boolean isExternalStorageWriteable() {
         String state = Environment.getExternalStorageState();
         return Environment.MEDIA_MOUNTED.equals(state);
     }
 
-    //Проверка на доступность внешнего хранилища хотя бы только для чтения
+    // Проверка на доступность внешнего хранилища хотя бы только для чтения
     public boolean isExternalStorageReadable() {
         String state = Environment.getExternalStorageState();
         return (Environment.MEDIA_MOUNTED.equals(state) ||
                 Environment.MEDIA_MOUNTED_READ_ONLY.equals(state));
     }
 
-    //Проверка доступа к памяти
+    // Проверка доступа к памяти
     private boolean checkPermissions() {
 
         if (!isExternalStorageReadable() || !isExternalStorageWriteable()) {
-            Toast.makeText(this, "Внешнее хранилище не доступно", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Внешнее хранилище недоступно", Toast.LENGTH_LONG).show();
             return false;
         }
-        int permissionCheck = 1;//ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int permissionCheck = 1; //ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_WRITE);
             return false;
         }
+
         return true;
     }
 
-    //Запрос на получение доступа к памяти
+    // Запрос на получение доступа к памяти
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
