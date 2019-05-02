@@ -1,4 +1,5 @@
 ### InertialNavigationAndroid
+***
 Added:
 * Accelerometr
 * Gyroscope
@@ -8,6 +9,7 @@ Planning:
 * Kalman filter
 
 ### Instruction
+***
 To start recording the readings, click **Start**.
 
 After clicking **Start** wait for sound notification and after that start moving.
