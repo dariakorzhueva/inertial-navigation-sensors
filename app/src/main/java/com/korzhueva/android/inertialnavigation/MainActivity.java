@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Показ интерфейса и иницилизация Button
         setContentView(R.layout.activity_main);
-        startButton = (Button) findViewById(R.id.startButton);
+        startButton = (Button) findViewById(R.id.btn_start);
         stopButton = (Button) findViewById(R.id.stopButton);
         stopButton.setEnabled(false);
 
@@ -77,6 +77,10 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 startButton.setEnabled(false);
                 stopButton.setEnabled(true);
+
+                // Получение текущего времени
+                mInitTime = System.currentTimeMillis();
+
                 createTableHead();
 
                 // Запись показаний разрешена
@@ -87,8 +91,10 @@ public class MainActivity extends AppCompatActivity {
                 handler.postDelayed(new Runnable() {
                     public void run() {
                         calibration();
+                        // Получение текущего времени
+                        mInitTime = System.currentTimeMillis();
                     }
-                }, 500);
+                }, 5000);
 
                 textStatus.setText("Началась запись в файл " + FILE_NAME);
             }
@@ -140,9 +146,6 @@ public class MainActivity extends AppCompatActivity {
         textWarning = findViewById(R.id.textWarning);
         textStatus = findViewById(R.id.textStatus);
         textWarning.setText("Старт - запуск считывания\nСтоп - прерывание считывания\nПосле звукового сигнала начинайте движение");
-
-        // Получение текущего времени
-        mInitTime = System.currentTimeMillis();
 
         textSens = (TextView) findViewById(R.id.textSens);
 
