@@ -2,7 +2,7 @@
 <resources>
     <dimen name="button_size">250dp</dimen>
     <dimen name="font_size_40">40sp</dimen>
-    <dimen name="font_size_16">16sp</dimen>
+    <dimen name="font_size_12">12sp</dimen>
     <dimen name="font_size_20">20sp</dimen>
     <dimen name="spacing_20">20dp</dimen>
     <dimen name="spacing_12">12dp</dimen>

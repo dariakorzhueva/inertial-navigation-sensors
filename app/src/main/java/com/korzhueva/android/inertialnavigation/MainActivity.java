@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -109,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }, 5000);
 
-                    //textStatus.setText("Началась запись в файл " + FILE_NAME);
+                    Snackbar.make(v, "Началась запись в файл " + FILE_NAME, Snackbar.LENGTH_LONG).show();
                 } else {
                     isStart = false;
 
@@ -140,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
 
-                    //textStatus.setText("Запись в файл " + FILE_NAME + " приостановлена");
+                    Snackbar.make(v, "Запись в файл " + FILE_NAME + " приостановлена", Snackbar.LENGTH_LONG).show();
                 }
             }
         });
@@ -152,12 +153,6 @@ public class MainActivity extends AppCompatActivity {
 
         getExternalPath();
 
-        //textWarning = findViewById(R.id.textWarning);
-        //textStatus = findViewById(R.id.textStatus);
-        //textWarning.setText("Старт - запуск считывания\nСтоп - прерывание считывания\nПосле звукового сигнала начинайте движение");
-
-        //textSens = (TextView) findViewById(R.id.textSens);
-
         // Получение показаний с датчиокв
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sensorAccel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -165,7 +160,6 @@ public class MainActivity extends AppCompatActivity {
         sensorMag = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
     }
 
-    //
     // Получение времени, прошедшего с начала инициализации приложения
     private double getDeltaT() {
         return System.currentTimeMillis() - mInitTime;
@@ -345,19 +339,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Формирование строки для вывода на экран
+    String format(double values[]) {
+        return String.format("X: %2$.8f\tY: %3$.8f\tZ: %4$.8f", sensTime, values[0], values[1],
+                values[2]);
+    }
 
     // Вывод информации на экран
     void showInfo() {
         tvTime.setText(String.format("Время: %1$.3f\n", sensTime));
 
-        tvAxis.setText(String.format("X: %2$.8f\t\tY: %3$.8f\t\tZ: %4$.8f ", sensTime, valuesAccel[0], valuesAccel[1],
-                valuesAccel[2]));
+        tvAxis.setText("Акселерометр\n" + format(valuesAccel));
 
-        tvRotations.setText(String.format("X: %2$.8f\t\tY: %3$.8f\t\tZ: %4$.8f ", sensTime, valuesGyro[0], valuesGyro[1],
-                valuesGyro[2]));
+        tvRotations.setText("Гироскоп\n" + format(valuesGyro));
 
-        tvMagnetic.setText(String.format("X: %2$.8f\t\tY: %3$.8f\t\tZ: %4$.8f ", sensTime, valuesMag[0], valuesMag[1],
-                valuesMag[2]));
+        tvMagnetic.setText("Магнитометр\n" + format(valuesMag));
     }
 
     // Вещественные массивы под показания датчиков
