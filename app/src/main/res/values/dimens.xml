@@ -1,2 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <dimen name="button_size">250dp</dimen>
+    <dimen name="font_size_40">40sp</dimen>
+    <dimen name="font_size_16">16sp</dimen>
+    <dimen name="font_size_20">20sp</dimen>
+    <dimen name="spacing_20">20dp</dimen>
+    <dimen name="spacing_12">12dp</dimen>
+    <dimen name="spacing_40">40dp</dimen>
+    <dimen name="spacing_560">560dp</dimen>
+    <dimen name="spacing_600">600dp</dimen>
+    <dimen name="spacing_520">520dp</dimen>
+</resources>

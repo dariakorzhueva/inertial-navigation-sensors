@@ -1,69 +1,73 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textWarning"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text=" "
-        android:textColor="@android:color/holo_red_dark"
-        android:textSize="16sp"
-        android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/textSens"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            <TextView
+                android:id="@+id/tv_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Время: "
+                android:textSize="@dimen/font_size_20"
+                android:layout_marginLeft="@dimen/spacing_40"
+                android:layout_marginRight="@dimen/spacing_40"
+                android:layout_marginTop="@dimen/spacing_20"/>
 
-        <Button
-            android:id="@+id/startButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="startWriting"
-            android:text="Старт" />
+            <Button
+                android:id="@+id/btn_start"
+                android:width="@dimen/button_size"
+                android:height="@dimen/button_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_button_green_state"
+                android:onClick="startWriting"
+                android:textSize="@dimen/font_size_40"
+                android:textColor="@android:color/white"
+                android:layout_marginTop="@dimen/spacing_12"
+                android:text="Старт" />
 
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            <TextView
+                android:id="@+id/tv_axis"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Оси1: "
+                android:textSize="@dimen/font_size_16"
+                android:layout_marginLeft="@dimen/spacing_40"
+                android:layout_marginRight="@dimen/spacing_40"
+                android:layout_marginTop="@dimen/spacing_40"
+                />
 
-        <Button
-            android:id="@+id/stopButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="stopWriting"
-            android:text="Стоп" />
+            <TextView
+                android:id="@+id/tv_rotations"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Оси2: "
+                android:textSize="@dimen/font_size_16"
+                android:layout_marginLeft="@dimen/spacing_40"
+                android:layout_marginRight="@dimen/spacing_40"
+                />
 
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/tv_magnetic"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/spacing_40"
+                android:layout_marginRight="@dimen/spacing_40"
+                android:textSize="@dimen/font_size_16"
+                tools:text="Оси3: " />
+        </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="181dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/textStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="109dp"
-            android:layout_weight="1" />
-    </LinearLayout>
-
+    </FrameLayout>
 </LinearLayout>

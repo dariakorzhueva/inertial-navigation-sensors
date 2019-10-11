@@ -13,32 +13,36 @@ import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+import java.util.MissingFormatArgumentException;
 import java.util.Timer;
 import java.util.TimerTask;
-import android.view.View.OnClickListener;
 
 public class MainActivity extends AppCompatActivity {
 
     // Определение элементов управления
     Button startButton;
-    Button stopButton;
-    TextView textSens;
-    TextView textStatus;
-    TextView textWarning;
+    TextView tvTime;
+    TextView tvAxis;
+    TextView tvRotations;
+    TextView tvMagnetic;
 
     // Оопределение датчиков
     SensorManager sensorManager;
@@ -60,6 +64,9 @@ public class MainActivity extends AppCompatActivity {
 
     // Метка для начала/остановки записи в файл
     private boolean flagStatus = false;
+    private boolean isStart = false;
+
+    private int sdk = android.os.Build.VERSION.SDK_INT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,74 +75,76 @@ public class MainActivity extends AppCompatActivity {
         // Показ интерфейса и иницилизация Button
         setContentView(R.layout.activity_main);
         startButton = (Button) findViewById(R.id.btn_start);
-        stopButton = (Button) findViewById(R.id.stopButton);
-        stopButton.setEnabled(false);
+        tvTime = (TextView) findViewById(R.id.tv_time);
+        tvTime.setText(String.format("Время: %1$.3f\n", sensTime));
+        tvAxis = (TextView) findViewById(R.id.tv_axis);
+        tvRotations = (TextView) findViewById(R.id.tv_rotations);
+        tvMagnetic = (TextView) findViewById(R.id.tv_magnetic);
 
-        // Установка слушателя кнопки Старт
-        OnClickListener listenerStart = new OnClickListener() {
+        startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startButton.setEnabled(false);
-                stopButton.setEnabled(true);
+                if (!isStart) {
+                    isStart = true;
 
-                // Получение текущего времени
-                mInitTime = System.currentTimeMillis();
+                    startButton.setText("Стоп");
 
-                createTableHead();
+                    startButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_button_red_state));
 
-                // Запись показаний разрешена
-                flagStatus = true;
+                    // Получение текущего времени
+                    mInitTime = System.currentTimeMillis();
 
-                // Задержка в 0,5 секунд для сбора показаний для калибровки
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        calibration();
-                        // Получение текущего времени
-                        mInitTime = System.currentTimeMillis();
-                    }
-                }, 5000);
+                    createTableHead();
 
-                textStatus.setText("Началась запись в файл " + FILE_NAME);
-            }
-        };
+                    // Запись показаний разрешена
+                    flagStatus = true;
 
-        // Установка слушателя кнопки Стоп
-        OnClickListener listenerStop = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startButton.setEnabled(true);
-                stopButton.setEnabled(false);
+                    // Задержка в 0,5 секунд для сбора показаний для калибровки
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            calibration();
+                            // Получение текущего времени
+                            mInitTime = System.currentTimeMillis();
+                        }
+                    }, 5000);
 
-                // Запись показаний запрещена
-                flagStatus = false;
+                    //textStatus.setText("Началась запись в файл " + FILE_NAME);
+                } else {
+                    isStart = false;
 
-                File file = new File(FILE_PATH);
-                FileWriter fr = null;
-                BufferedWriter br = null;
-                try {
-                    fr = new FileWriter(file, true);
-                    br = new BufferedWriter(fr);
-                    br.newLine();
-                    br.append("Stop of motion recording");
-                    br.newLine();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
+                    startButton.setText("Старт");
+
+                    startButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_button_green_state));
+
+                    // Запись показаний запрещена
+                    flagStatus = false;
+
+                    File file = new File(FILE_PATH);
+                    FileWriter fr = null;
+                    BufferedWriter br = null;
                     try {
-                        br.close();
-                        fr.close();
+                        fr = new FileWriter(file, true);
+                        br = new BufferedWriter(fr);
+                        br.newLine();
+                        br.append("Stop of motion recording");
+                        br.newLine();
                     } catch (IOException e) {
                         e.printStackTrace();
+                    } finally {
+                        try {
+                            br.close();
+                            fr.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
+
+                    //textStatus.setText("Запись в файл " + FILE_NAME + " приостановлена");
                 }
-
-                textStatus.setText("Запись в файл " + FILE_NAME + " приостановлена");
             }
-        };
+        });
 
-        startButton.setOnClickListener(listenerStart);
-        stopButton.setOnClickListener(listenerStop);
 
         // Проверка разрешения на запись в файл
         if (!permissionGranted)
@@ -143,11 +152,11 @@ public class MainActivity extends AppCompatActivity {
 
         getExternalPath();
 
-        textWarning = findViewById(R.id.textWarning);
-        textStatus = findViewById(R.id.textStatus);
-        textWarning.setText("Старт - запуск считывания\nСтоп - прерывание считывания\nПосле звукового сигнала начинайте движение");
+        //textWarning = findViewById(R.id.textWarning);
+        //textStatus = findViewById(R.id.textStatus);
+        //textWarning.setText("Старт - запуск считывания\nСтоп - прерывание считывания\nПосле звукового сигнала начинайте движение");
 
-        textSens = (TextView) findViewById(R.id.textSens);
+        //textSens = (TextView) findViewById(R.id.textSens);
 
         // Получение показаний с датчиокв
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -156,13 +165,14 @@ public class MainActivity extends AppCompatActivity {
         sensorMag = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
     }
 
+    //
     // Получение времени, прошедшего с начала инициализации приложения
     private double getDeltaT() {
         return System.currentTimeMillis() - mInitTime;
     }
 
     // Калибровка показаний датчиков
-    public void calibration(){
+    public void calibration() {
         try {
             // Запись в файл разделителя для разграничения калибровочных и последующих показний
             File file = new File(FILE_PATH);
@@ -259,9 +269,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         sensorManager.registerListener(listener, sensorAccel,
-                SensorManager.SENSOR_DELAY_FASTEST );
-        sensorManager.registerListener(listener, sensorGyro, SensorManager.SENSOR_DELAY_FASTEST );
-        sensorManager.registerListener(listener, sensorMag, SensorManager.SENSOR_DELAY_FASTEST );
+                SensorManager.SENSOR_DELAY_FASTEST);
+        sensorManager.registerListener(listener, sensorGyro, SensorManager.SENSOR_DELAY_FASTEST);
+        sensorManager.registerListener(listener, sensorMag, SensorManager.SENSOR_DELAY_FASTEST);
         // Запуск таймера и потока, повторяемого раз в 200 миллисекунд
         // Если флаг записи в файл истинен, то содержимое потока выполнится
         // В противном случае - не выполняется
@@ -335,17 +345,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Формирование строки для вывода на экран
-    String format(double values[]) {
-        return String.format(" \nTIME: %1$.3f\nX: %2$.8f\t\tY: %3$.8f\t\tZ: %4$.8f ", sensTime, values[0], values[1],
-                values[2]);
-    }
 
     // Вывод информации на экран
     void showInfo() {
-        sb.setLength(0);
-        sb.append("\nAccelerometer " + format(valuesAccel))
-                .append("\n\nGyroscope " + format(valuesGyro)).append("\n\nMagnetic Field " + format(valuesMag)+"\n");
-        textSens.setText(sb);
+        tvTime.setText(String.format("Время: %1$.3f\n", sensTime));
+
+        tvAxis.setText(String.format("X: %2$.8f\t\tY: %3$.8f\t\tZ: %4$.8f ", sensTime, valuesAccel[0], valuesAccel[1],
+                valuesAccel[2]));
+
+        tvRotations.setText(String.format("X: %2$.8f\t\tY: %3$.8f\t\tZ: %4$.8f ", sensTime, valuesGyro[0], valuesGyro[1],
+                valuesGyro[2]));
+
+        tvMagnetic.setText(String.format("X: %2$.8f\t\tY: %3$.8f\t\tZ: %4$.8f ", sensTime, valuesMag[0], valuesMag[1],
+                valuesMag[2]));
     }
 
     // Вещественные массивы под показания датчиков
@@ -355,12 +367,12 @@ public class MainActivity extends AppCompatActivity {
 
     // Установка слушателя датчиков
     SensorEventListener listener = new SensorEventListener() {
-
         @Override
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
         }
 
         @Override
+
         public void onSensorChanged(SensorEvent event) {
             // В зависимости от типа датчика снимаются его показания
             switch (event.sensor.getType()) {
