@@ -2,7 +2,7 @@ package com.korzhueva.android.inertialnavigation;
 
 /**
  * Java implementation of Madgwick's IMU and AHRS algorithms:
- * https://x-io.co.uk/open-source-imu-and-ahrs-algorithms/
+ * See: https://x-io.co.uk/open-source-imu-and-ahrs-algorithms/
  */
 
 public class MadgwickFilter {
