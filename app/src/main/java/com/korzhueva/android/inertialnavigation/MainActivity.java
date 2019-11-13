@@ -1,7 +1,9 @@
 package com.korzhueva.android.inertialnavigation;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -127,7 +129,15 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
 
-                    Snackbar.make(v, "Запись в файл " + FILE_NAME + " приостановлена", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(v, "Запись в файл " + FILE_NAME + " приостановлена", Snackbar.LENGTH_LONG)
+                            .setActionTextColor(Color.GREEN)
+                            .setAction("Открыть файл",
+                                    new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                           openCSVfile();
+                                        }
+                                    }).show();
                 }
             }
         });
@@ -141,6 +151,15 @@ public class MainActivity extends AppCompatActivity {
         sensorAccel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorGyro = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         sensorMag = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+    }
+
+    private void openCSVfile() {
+        File file = new File(Environment.getExternalStorageDirectory(), FILE_NAME);
+        Intent intent = new Intent();
+
+        intent.setAction(android.content.Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.fromFile(file), "text/csv");
+        startActivity(intent);
     }
 
     private double getDeltaT() {
