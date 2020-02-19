@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     Sensor sensorAccel;
     Sensor sensorGyro;
     Sensor sensorMag;
+    Sensor sensorLinearAccel;
 
     private double mInitTime;
     private double sensTime;
@@ -151,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
         sensorAccel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorGyro = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         sensorMag = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        sensorLinearAccel = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
     }
 
     private void openCSVfile() {
@@ -184,6 +186,12 @@ public class MainActivity extends AppCompatActivity {
                 br.append("aAxisY (m/s2)");
                 br.append(",");
                 br.append("aAxisZ (m/s2)");
+                br.append(",");
+                br.append("LinAAxisX (m/s2)");
+                br.append(",");
+                br.append("LinAAxisY (m/s2)");
+                br.append(",");
+                br.append("LinAAxisZ (m/s2)");
                 br.append(",");
                 br.append("gRotX (rad/s)");
                 br.append(",");
@@ -234,6 +242,12 @@ public class MainActivity extends AppCompatActivity {
             br.append(",");
             br.append("aAxisZ (m/s2)");
             br.append(",");
+            br.append("LinAAxisX (m/s2)");
+            br.append(",");
+            br.append("LinAAxisY (m/s2)");
+            br.append(",");
+            br.append("LinAAxisZ (m/s2)");
+            br.append(",");
             br.append("gRotX (rad/s)");
             br.append(",");
             br.append("gRotY (rad/s)");
@@ -264,6 +278,7 @@ public class MainActivity extends AppCompatActivity {
                 SensorManager.SENSOR_DELAY_FASTEST);
         sensorManager.registerListener(listener, sensorGyro, SensorManager.SENSOR_DELAY_FASTEST);
         sensorManager.registerListener(listener, sensorMag, SensorManager.SENSOR_DELAY_FASTEST);
+        sensorManager.registerListener(listener, sensorLinearAccel, SensorManager.SENSOR_DELAY_FASTEST);
 
         timer = new Timer();
         TimerTask task = new TimerTask() {
@@ -349,6 +364,7 @@ public class MainActivity extends AppCompatActivity {
     double[] valuesAccel = new double[3];
     double[] valuesGyro = new double[3];
     double[] valuesMag = new double[3];
+    double[] valuesLinear = new double[3];
 
     SensorEventListener listener = new SensorEventListener() {
         @Override
@@ -372,6 +388,11 @@ public class MainActivity extends AppCompatActivity {
                 case Sensor.TYPE_MAGNETIC_FIELD:
                     for (int i = 0; i < 3; i++) {
                         valuesMag[i] = event.values[i];
+                    }
+                    break;
+                case Sensor.TYPE_LINEAR_ACCELERATION:
+                    for (int i = 0; i < 3; i++) {
+                        valuesLinear[i] = event.values[i];
                     }
                     break;
             }
