@@ -322,6 +322,12 @@ public class MainActivity extends AppCompatActivity {
             br.append(',');
             br.append(String.valueOf(valuesAccel[2]));
             br.append(',');
+            br.append(String.valueOf(valuesLinear[0]));
+            br.append(',');
+            br.append(String.valueOf(valuesLinear[1]));
+            br.append(',');
+            br.append(String.valueOf(valuesLinear[2]));
+            br.append(',');
             br.append(String.valueOf(valuesGyro[0]));
             br.append(',');
             br.append(String.valueOf(valuesGyro[1]));
