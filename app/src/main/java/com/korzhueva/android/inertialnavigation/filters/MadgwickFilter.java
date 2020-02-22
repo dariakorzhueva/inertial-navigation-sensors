@@ -1,4 +1,4 @@
-package com.korzhueva.android.inertialnavigation;
+package com.korzhueva.android.inertialnavigation.filters;
 
 /**
  * Java implementation of Madgwick's IMU and AHRS algorithms:
@@ -6,9 +6,9 @@ package com.korzhueva.android.inertialnavigation;
  */
 
 public class MadgwickFilter {
-    public float mSamplePeriod;
-    public float mBeta;
-    public float[] mQuaternion;
+    private float mSamplePeriod;
+    private float mBeta;
+    private float[] mQuaternion;
 
     public float getSamplePeriod() {
         return mSamplePeriod;

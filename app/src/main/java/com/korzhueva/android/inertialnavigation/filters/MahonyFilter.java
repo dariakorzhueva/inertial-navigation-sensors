@@ -1,4 +1,4 @@
-package com.korzhueva.android.inertialnavigation;
+package com.korzhueva.android.inertialnavigation.filters;
 
 /**
  * Java implementation of Madgwick's implementation of Mayhony's algorithm.
@@ -6,10 +6,10 @@ package com.korzhueva.android.inertialnavigation;
  */
 
 public class MahonyFilter {
-    public float mSamplePeriod;
-    public float mKp;
-    public float mKi;
-    public float[] mQuaternion;
+    private float mSamplePeriod;
+    private float mKp;
+    private float mKi;
+    private float[] mQuaternion;
     private float[] mEInt;
 
 
