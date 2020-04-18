@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
                                     new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
-                                           openCSVFile();
+                                           openCSVFile(FILE_PATH);
                                         }
                                     }).show();
                 }
@@ -170,8 +170,8 @@ public class MainActivity extends AppCompatActivity {
         sensorLinearAccel = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
     }
 
-    private void openCSVFile() {
-        File file = new File(Environment.getExternalStorageDirectory(), FILE_NAME);
+    private void openCSVFile(String name) {
+        File file = new File(Environment.getExternalStorageDirectory(), name);
         Intent intent = new Intent();
 
         intent.setAction(android.content.Intent.ACTION_VIEW);
