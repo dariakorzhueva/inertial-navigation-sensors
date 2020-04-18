@@ -1,8 +1,8 @@
 package com.korzhueva.android.inertialnavigation.filters;
 
 public class LowPassFilter {
-    private float alpha = 0;
-    public LowPassFilter(float coefficient){
+    private double alpha = 0;
+    public LowPassFilter(double coefficient){
         alpha = coefficient;
     }
 

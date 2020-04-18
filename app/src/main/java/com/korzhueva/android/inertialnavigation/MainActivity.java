@@ -23,6 +23,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.korzhueva.android.inertialnavigation.filters.AlphaBetaFlter;
+import com.korzhueva.android.inertialnavigation.filters.LowPassFilter;
+import com.korzhueva.android.inertialnavigation.filters.MovingAverage;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -47,14 +52,21 @@ public class MainActivity extends AppCompatActivity {
     Sensor sensorMag;
     Sensor sensorLinearAccel;
 
+    MovingAverage mMovingAverage = new MovingAverage();
+    LowPassFilter mLowPassFilter = new LowPassFilter(0.25);
+    AlphaBetaFlter mAlphaBetaFlter = new AlphaBetaFlter();
+
     private double mInitTime;
     private double sensTime;
     Timer timer;
 
     private static String FILE_NAME = "sensorsValues";
+    public static String FILE_NAME_FILTER = "filterValues";
     private static String FILE_PATH = "";
-    StringBuilder sb = new StringBuilder();
+    private static String FILE_PATH_FILTER = "";
     private static final int REQUEST_PERMISSION_WRITE = 1001;
+
+    StringBuilder sb = new StringBuilder();
     private boolean permissionGranted;
 
     private boolean flagStatus = false;
@@ -86,7 +98,8 @@ public class MainActivity extends AppCompatActivity {
 
                     mInitTime = System.currentTimeMillis();
 
-                    createTableHead();
+                    createTableHead(FILE_PATH);
+                    createTableHead(FILE_PATH_FILTER);
 
                     flagStatus = true;
 
@@ -146,7 +159,16 @@ public class MainActivity extends AppCompatActivity {
         if (!permissionGranted)
             checkPermissions();
 
-        getExternalPath();
+        File storage = Environment.getExternalStorageDirectory();
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH-mm-ss");
+        Date date = new Date();
+
+        FILE_NAME = FILE_NAME + " " + dateFormat.format(date) + ".csv";
+        FILE_PATH = storage + "/" + FILE_NAME;
+
+        FILE_NAME_FILTER = FILE_NAME_FILTER + " " + dateFormat.format(date) + ".csv";
+        FILE_PATH_FILTER = storage + "/" + FILE_NAME_FILTER;
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sensorAccel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -225,8 +247,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void createTableHead() {
-        File file = new File(FILE_PATH);
+    public void createTableHead(String path) {
+        File file = new File(path);
         FileWriter fr = null;
         BufferedWriter br = null;
         try {
@@ -350,6 +372,52 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+    }
+
+    public void writeFilterValues(){
+        File file = new File(FILE_PATH_FILTER);
+        FileWriter fr = null;
+        BufferedWriter br = null;
+
+        try {
+            fr = new FileWriter(file, true);
+            br = new BufferedWriter(fr);
+            br.newLine();
+            br.append(String.valueOf(sensTime));
+            br.append(',');
+            br.append(String.valueOf(mMovingAverage.update(valuesAccel[0])));
+            br.append(',');
+            br.append(String.valueOf(mMovingAverage.update(valuesAccel[1])));
+            br.append(',');
+            br.append(String.valueOf(mMovingAverage.update(valuesAccel[2])));
+            br.append(',');
+            br.append(String.valueOf(mMovingAverage.update(valuesLinear[0])));
+            br.append(',');
+            br.append(String.valueOf(mMovingAverage.update(valuesLinear[1])));
+            br.append(',');
+            br.append(String.valueOf(mMovingAverage.update(valuesLinear[2])));
+            br.append(',');
+            br.append(String.valueOf(mMovingAverage.update(valuesGyro[0])));
+            br.append(',');
+            br.append(String.valueOf(mMovingAverage.update(valuesGyro[1])));
+            br.append(',');
+            br.append(String.valueOf(mMovingAverage.update(valuesGyro[2])));
+            br.append(',');
+            br.append(String.valueOf(mMovingAverage.update(valuesMag[0])));
+            br.append(',');
+            br.append(String.valueOf(mMovingAverage.update(valuesMag[1])));
+            br.append(',');
+            br.append(String.valueOf(mMovingAverage.update(valuesMag[2])));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                br.close();
+                fr.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     String format(double values[]) {
