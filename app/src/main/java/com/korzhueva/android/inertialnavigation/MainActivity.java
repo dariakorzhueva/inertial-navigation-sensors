@@ -159,16 +159,10 @@ public class MainActivity extends AppCompatActivity {
         if (!permissionGranted)
             checkPermissions();
 
-        File storage = Environment.getExternalStorageDirectory();
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH-mm-ss");
-        Date date = new Date();
+        FILE_PATH = getExternalPath(FILE_PATH, FILE_NAME);
 
-        FILE_NAME = FILE_NAME + " " + dateFormat.format(date) + ".csv";
-        FILE_PATH = storage + "/" + FILE_NAME;
-
-        FILE_NAME_FILTER = FILE_NAME_FILTER + " " + dateFormat.format(date) + ".csv";
-        FILE_PATH_FILTER = storage + "/" + FILE_NAME_FILTER;
+        FILE_PATH_FILTER = getExternalPath(FILE_PATH_FILTER, FILE_NAME_FILTER);
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sensorAccel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -476,14 +470,16 @@ public class MainActivity extends AppCompatActivity {
     };
 
     // Маска итогового файла: sensorsValues XXXX.XX.XX XX-XX-XX.csv
-    private void getExternalPath() {
+    private String getExternalPath(String path, String name) {
         File storage = Environment.getExternalStorageDirectory();
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH-mm-ss");
         Date date = new Date();
 
-        FILE_NAME = FILE_NAME + " " + dateFormat.format(date) + ".csv";
-        FILE_PATH = storage + "/" + FILE_NAME;
+        name = name + " " + dateFormat.format(date) + ".csv";
+        path = storage + "/" + name;
+
+        return path;
     }
 
     public boolean isExternalStorageWriteable() {
