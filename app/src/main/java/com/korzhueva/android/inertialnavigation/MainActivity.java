@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
                                     new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
-                                           openCSVfile();
+                                           openCSVFile();
                                         }
                                     }).show();
                 }
@@ -158,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (!permissionGranted)
             checkPermissions();
-
 
         FILE_PATH = getExternalPath(FILE_PATH, FILE_NAME);
 
@@ -171,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
         sensorLinearAccel = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
     }
 
-    private void openCSVfile() {
+    private void openCSVFile() {
         File file = new File(Environment.getExternalStorageDirectory(), FILE_NAME);
         Intent intent = new Intent();
 
@@ -306,6 +305,7 @@ public class MainActivity extends AppCompatActivity {
                         if (flagStatus) {
                             sensTime = getDeltaT() / 1000;
                             writeValues();
+                            writeFilterValues();
                             showInfo();
                         }
                     }
@@ -494,7 +494,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean checkPermissions() {
-
         if (!isExternalStorageReadable() || !isExternalStorageWriteable()) {
             Toast.makeText(this, "Внешнее хранилище недоступно", Toast.LENGTH_LONG).show();
             return false;
