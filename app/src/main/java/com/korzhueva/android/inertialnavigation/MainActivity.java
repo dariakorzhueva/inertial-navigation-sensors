@@ -39,7 +39,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
-
     Button startButton;
     TextView tvTime;
     TextView tvAxis;
@@ -58,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
     //LowPassFilter mLowPassFilter = new LowPassFilter(0.25);
     //AlphaBetaFlter mAlphaBetaFlter = new AlphaBetaFlter();
 
+    Date currentDate = new Date();
+    DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH-mm-ss");
     private double mInitTime;
     private double sensTime;
     Timer timer;
@@ -151,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
                                     new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
-                                            openCSVFile(FILE_PATH);
+                                            openCSVFile(FILE_NAME);
                                         }
                                     }).show();
                 }
@@ -173,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void openCSVFile(String name) {
-        File file = new File(Environment.getExternalStorageDirectory(), name);
+        File file = new File(Environment.getExternalStorageDirectory(), name + " " + dateFormat.format(currentDate) + ".csv");
         Intent intent = new Intent();
 
         intent.setAction(android.content.Intent.ACTION_VIEW);
@@ -456,11 +457,7 @@ public class MainActivity extends AppCompatActivity {
     // Маска итогового файла: sensorsValues XXXX.XX.XX XX-XX-XX.csv
     private String getExternalPath(String path, String name) {
         File storage = Environment.getExternalStorageDirectory();
-
-        DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH-mm-ss");
-        Date date = new Date();
-
-        name = name + " " + dateFormat.format(date) + ".csv";
+        name = name + " " + dateFormat.format(currentDate) + ".csv";
         path = storage + "/" + name;
 
         return path;
