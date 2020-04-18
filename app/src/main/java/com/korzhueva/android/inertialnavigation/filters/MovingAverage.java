@@ -21,4 +21,5 @@ public class MovingAverage {
         sum = 0;
         counter = 0;
     }
+
 }

@@ -1,15 +1,15 @@
 package com.korzhueva.android.inertialnavigation.filters;
 
-public class AlphaBetaFlter {
+public class AlphaBetaFilter {
     private double dt = 0.5;
     private double xk_1 = 0, vk_1 = 0, a = 0.85, b = 0.005;
     private double xk, vk, rk;
 
-    public AlphaBetaFlter() {
+    public AlphaBetaFilter() {
 
     }
 
-    public AlphaBetaFlter(double dt, double xk_1, double vk_1, double a, double b) {
+    public AlphaBetaFilter(double dt, double xk_1, double vk_1, double a, double b) {
         this.dt = dt;
         this.xk_1 = xk_1;
         this.vk_1 = vk_1;

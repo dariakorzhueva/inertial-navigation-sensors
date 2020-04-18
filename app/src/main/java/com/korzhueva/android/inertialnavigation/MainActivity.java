@@ -27,7 +27,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.korzhueva.android.inertialnavigation.filters.AlphaBetaFlter;
+import com.korzhueva.android.inertialnavigation.filters.AlphaBetaFilter;
 import com.korzhueva.android.inertialnavigation.filters.LowPassFilter;
 import com.korzhueva.android.inertialnavigation.filters.MovingAverage;
 
@@ -60,8 +60,15 @@ public class MainActivity extends AppCompatActivity {
     MovingAverage mMovingAverageX = new MovingAverage();
     MovingAverage mMovingAverageY = new MovingAverage();
     MovingAverage mMovingAverageZ = new MovingAverage();
-    //LowPassFilter mLowPassFilter = new LowPassFilter(0.25);
-    //AlphaBetaFlter mAlphaBetaFlter = new AlphaBetaFlter();
+
+    LowPassFilter mLowPassFilterX = new LowPassFilter(0.25);
+    LowPassFilter mLowPassFilterY = new LowPassFilter(0.25);
+    LowPassFilter mLowPassFilterZ = new LowPassFilter(0.25);
+
+    AlphaBetaFilter mAlphaBetaFilterX = new AlphaBetaFilter();
+    AlphaBetaFilter mAlphaBetaFilterY = new AlphaBetaFilter();
+    AlphaBetaFilter mAlphaBetaFilterZ = new AlphaBetaFilter();
+
 
     Date currentDate = new Date();
     DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH-mm-ss");
@@ -78,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
     StringBuilder sb = new StringBuilder();
     private boolean permissionGranted;
 
+    private int flagFilter = 0;
     private boolean flagStatus = false;
     private boolean isStart = false;
 
@@ -193,12 +201,15 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId())
         {
             case R.id.maf:
+                flagFilter = 1;
                 Snackbar.make(mConstraintLayout, "Включен фильтр скользящего среднего", Snackbar.LENGTH_LONG).show();
                 return true;
             case R.id.lpf:
+                flagFilter = 2;
                 Snackbar.make(mConstraintLayout, "Включен фильтр низких частот", Snackbar.LENGTH_LONG).show();
                 return true;
             case R.id.abf:
+                flagFilter = 3;
                 Snackbar.make(mConstraintLayout, "Включен альфа-бета фильтр", Snackbar.LENGTH_LONG).show();
                 return true;
             default:
@@ -342,7 +353,19 @@ public class MainActivity extends AppCompatActivity {
                         if (flagStatus) {
                             sensTime = getDeltaT() / 1000;
                             writeValues();
-                            writeFilterValues();
+
+                            switch(flagFilter){
+                                case 1:
+                                    writeMAF();
+                                    break;
+                                case 2:
+                                    writeLPF();
+                                    break;
+                                case 3:
+                                    writeABF();
+                                    break;
+                            }
+
                             showInfo();
                         }
                     }
@@ -405,7 +428,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void writeFilterValues() {
+    public void writeMAF() {
         File file = new File(FILE_PATH_FILTER);
         FileWriter fr = null;
         BufferedWriter br = null;
@@ -423,6 +446,66 @@ public class MainActivity extends AppCompatActivity {
             br.append(String.valueOf(mMovingAverageY.update(valuesAccel[1])));
             br.append(',');
             br.append(String.valueOf(mMovingAverageZ.update(valuesAccel[2])));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                br.close();
+                fr.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void writeLPF() {
+        File file = new File(FILE_PATH_FILTER);
+        FileWriter fr = null;
+        BufferedWriter br = null;
+
+        try {
+            fr = new FileWriter(file, true);
+            br = new BufferedWriter(fr);
+            br.newLine();
+            br.append("Low Pass Filter");
+            br.newLine();
+            br.append(String.valueOf(sensTime));
+            br.append(',');
+            br.append(String.valueOf(mLowPassFilterX.update(valuesAccel[0])));
+            br.append(',');
+            br.append(String.valueOf(mLowPassFilterY.update(valuesAccel[1])));
+            br.append(',');
+            br.append(String.valueOf(mLowPassFilterZ.update(valuesAccel[2])));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                br.close();
+                fr.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void writeABF() {
+        File file = new File(FILE_PATH_FILTER);
+        FileWriter fr = null;
+        BufferedWriter br = null;
+
+        try {
+            fr = new FileWriter(file, true);
+            br = new BufferedWriter(fr);
+            br.newLine();
+            br.append("Alpha-Beta Filter");
+            br.newLine();
+            br.append(String.valueOf(sensTime));
+            br.append(',');
+            br.append(String.valueOf(mAlphaBetaFilterX.update(valuesAccel[0])));
+            br.append(',');
+            br.append(String.valueOf(mAlphaBetaFilterY.update(valuesAccel[1])));
+            br.append(',');
+            br.append(String.valueOf(mAlphaBetaFilterZ.update(valuesAccel[2])));
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
