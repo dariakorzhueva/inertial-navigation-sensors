@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/maf"
+        app:showAsAction="ifRoom|never"
+        android:title="@string/moving_average_text">
+    </item>
+    <item
+        android:id="@+id/lpf"
+        app:showAsAction="ifRoom|never"
+        android:title="@string/low_pass_text">
+    </item>
+    <item
+        android:id="@+id/abf"
+        app:showAsAction="ifRoom|never"
+        android:title="@string/alpha_beta_filter_text">
+    </item>
+</menu>

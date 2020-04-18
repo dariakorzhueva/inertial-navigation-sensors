@@ -14,11 +14,14 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -40,10 +43,13 @@ import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
     Button startButton;
+
     TextView tvTime;
     TextView tvAxis;
     TextView tvRotations;
     TextView tvMagnetic;
+
+    ConstraintLayout mConstraintLayout;
 
     SensorManager sensorManager;
     Sensor sensorAccel;
@@ -82,7 +88,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+        mConstraintLayout = (ConstraintLayout)findViewById(R.id.constraint_layout);
         startButton = (Button) findViewById(R.id.btn_start);
+
         tvTime = (TextView) findViewById(R.id.tv_time);
         tvTime.setText(String.format("Время: %1$.3f\n", sensTime));
         tvAxis = (TextView) findViewById(R.id.tv_axis);
@@ -172,6 +180,32 @@ public class MainActivity extends AppCompatActivity {
         //sensorMag = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         sensorLinearAccel = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
+            case R.id.maf:
+                Snackbar.make(mConstraintLayout, "Включен фильтр скользящего среднего", Snackbar.LENGTH_LONG).show();
+                return true;
+            case R.id.lpf:
+                Snackbar.make(mConstraintLayout, "Включен фильтр низких частот", Snackbar.LENGTH_LONG).show();
+                return true;
+            case R.id.abf:
+                Snackbar.make(mConstraintLayout, "Включен альфа-бета фильтр", Snackbar.LENGTH_LONG).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 
     private void openCSVFile(String name) {
         File file = new File(Environment.getExternalStorageDirectory(), name + " " + dateFormat.format(currentDate) + ".csv");
@@ -379,6 +413,8 @@ public class MainActivity extends AppCompatActivity {
         try {
             fr = new FileWriter(file, true);
             br = new BufferedWriter(fr);
+            br.newLine();
+            br.append("Moving Average Filter");
             br.newLine();
             br.append(String.valueOf(sensTime));
             br.append(',');

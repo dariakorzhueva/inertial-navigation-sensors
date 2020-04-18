@@ -1,8 +1,10 @@
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    android:id="@+id/constraint_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <TextView
@@ -10,11 +12,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
         android:textSize="@dimen/font_size_20"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Время: " />
@@ -40,7 +42,7 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_time" />
 
     <TextView
-        android:id="@+id/tv_axis"
+        android:id="@+id/tv_rotations"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -50,22 +52,22 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_start"
-        tools:text="Оси1: " />
+        app:layout_constraintTop_toBottomOf="@+id/tv_axis"
+        tools:text="Оси2: " />
 
     <TextView
-        android:id="@+id/tv_rotations"
+        android:id="@+id/tv_axis"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="88dp"
         android:layout_marginEnd="24dp"
         android:textSize="@dimen/font_size_12"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_axis"
-        tools:text="Оси2: " />
+        app:layout_constraintTop_toBottomOf="@+id/btn_start"
+        tools:text="Оси1: " />
 
     <TextView
         android:id="@+id/tv_magnetic"
@@ -83,5 +85,7 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_rotations"
         app:layout_constraintVertical_bias="0.0"
         tools:text="Оси3: " />
+
+
 
 </android.support.constraint.ConstraintLayout>

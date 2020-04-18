@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Inertial Navigation</string>
+    <string name="moving_average_text">MAF</string>
+    <string name="low_pass_text">LPF</string>
+    <string name="alpha_beta_filter_text">ABF</string>
 </resources>
