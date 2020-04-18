@@ -52,9 +52,11 @@ public class MainActivity extends AppCompatActivity {
     Sensor sensorMag;
     Sensor sensorLinearAccel;
 
-    MovingAverage mMovingAverage = new MovingAverage();
-    LowPassFilter mLowPassFilter = new LowPassFilter(0.25);
-    AlphaBetaFlter mAlphaBetaFlter = new AlphaBetaFlter();
+    MovingAverage mMovingAverageX = new MovingAverage();
+    MovingAverage mMovingAverageY = new MovingAverage();
+    MovingAverage mMovingAverageZ = new MovingAverage();
+    //LowPassFilter mLowPassFilter = new LowPassFilter(0.25);
+    //AlphaBetaFlter mAlphaBetaFlter = new AlphaBetaFlter();
 
     private double mInitTime;
     private double sensTime;
@@ -84,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         tvTime.setText(String.format("Время: %1$.3f\n", sensTime));
         tvAxis = (TextView) findViewById(R.id.tv_axis);
         tvRotations = (TextView) findViewById(R.id.tv_rotations);
-        tvMagnetic = (TextView) findViewById(R.id.tv_magnetic);
+        //tvMagnetic = (TextView) findViewById(R.id.tv_magnetic);
 
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -149,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
                                     new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
-                                           openCSVFile(FILE_PATH);
+                                            openCSVFile(FILE_PATH);
                                         }
                                     }).show();
                 }
@@ -166,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sensorAccel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorGyro = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        sensorMag = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        //sensorMag = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         sensorLinearAccel = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
     }
 
@@ -214,11 +216,11 @@ public class MainActivity extends AppCompatActivity {
                 br.append(",");
                 br.append("gRotZ (rad/s)");
                 br.append(",");
-                br.append("magX (mT)");
-                br.append(",");
-                br.append("magY (mT)");
-                br.append(",");
-                br.append("magZ (mT)");
+//                br.append("magX (mT)");
+//                br.append(",");
+//                br.append("magY (mT)");
+//                br.append(",");
+//                br.append("magZ (mT)");
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
@@ -269,11 +271,11 @@ public class MainActivity extends AppCompatActivity {
             br.append(",");
             br.append("gRotZ (rad/s)");
             br.append(",");
-            br.append("magX (mT)");
-            br.append(",");
-            br.append("magY (mT)");
-            br.append(",");
-            br.append("magZ (mT)");
+//            br.append("magX (mT)");
+//            br.append(",");
+//            br.append("magY (mT)");
+//            br.append(",");
+//            br.append("magZ (mT)");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -292,7 +294,7 @@ public class MainActivity extends AppCompatActivity {
         sensorManager.registerListener(listener, sensorAccel,
                 SensorManager.SENSOR_DELAY_FASTEST);
         sensorManager.registerListener(listener, sensorGyro, SensorManager.SENSOR_DELAY_FASTEST);
-        sensorManager.registerListener(listener, sensorMag, SensorManager.SENSOR_DELAY_FASTEST);
+        //sensorManager.registerListener(listener, sensorMag, SensorManager.SENSOR_DELAY_FASTEST);
         sensorManager.registerListener(listener, sensorLinearAccel, SensorManager.SENSOR_DELAY_FASTEST);
 
         timer = new Timer();
@@ -349,12 +351,12 @@ public class MainActivity extends AppCompatActivity {
             br.append(String.valueOf(valuesGyro[1]));
             br.append(',');
             br.append(String.valueOf(valuesGyro[2]));
-            br.append(',');
-            br.append(String.valueOf(valuesMag[0]));
-            br.append(',');
-            br.append(String.valueOf(valuesMag[1]));
-            br.append(',');
-            br.append(String.valueOf(valuesMag[2]));
+//            br.append(',');
+//            br.append(String.valueOf(valuesMag[0]));
+//            br.append(',');
+//            br.append(String.valueOf(valuesMag[1]));
+//            br.append(',');
+//            br.append(String.valueOf(valuesMag[2]));
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -368,7 +370,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void writeFilterValues(){
+    public void writeFilterValues() {
         File file = new File(FILE_PATH_FILTER);
         FileWriter fr = null;
         BufferedWriter br = null;
@@ -379,29 +381,11 @@ public class MainActivity extends AppCompatActivity {
             br.newLine();
             br.append(String.valueOf(sensTime));
             br.append(',');
-            br.append(String.valueOf(mMovingAverage.update(valuesAccel[0])));
+            br.append(String.valueOf(mMovingAverageX.update(valuesAccel[0])));
             br.append(',');
-            br.append(String.valueOf(mMovingAverage.update(valuesAccel[1])));
+            br.append(String.valueOf(mMovingAverageY.update(valuesAccel[1])));
             br.append(',');
-            br.append(String.valueOf(mMovingAverage.update(valuesAccel[2])));
-            br.append(',');
-            br.append(String.valueOf(mMovingAverage.update(valuesLinear[0])));
-            br.append(',');
-            br.append(String.valueOf(mMovingAverage.update(valuesLinear[1])));
-            br.append(',');
-            br.append(String.valueOf(mMovingAverage.update(valuesLinear[2])));
-            br.append(',');
-            br.append(String.valueOf(mMovingAverage.update(valuesGyro[0])));
-            br.append(',');
-            br.append(String.valueOf(mMovingAverage.update(valuesGyro[1])));
-            br.append(',');
-            br.append(String.valueOf(mMovingAverage.update(valuesGyro[2])));
-            br.append(',');
-            br.append(String.valueOf(mMovingAverage.update(valuesMag[0])));
-            br.append(',');
-            br.append(String.valueOf(mMovingAverage.update(valuesMag[1])));
-            br.append(',');
-            br.append(String.valueOf(mMovingAverage.update(valuesMag[2])));
+            br.append(String.valueOf(mMovingAverageZ.update(valuesAccel[2])));
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -426,12 +410,12 @@ public class MainActivity extends AppCompatActivity {
 
         tvRotations.setText("Гироскоп\n" + format(valuesGyro));
 
-        tvMagnetic.setText("Магнитометр\n" + format(valuesMag));
+        //tvMagnetic.setText("Магнитометр\n" + format(valuesMag));
     }
 
     double[] valuesAccel = new double[3];
     double[] valuesGyro = new double[3];
-    double[] valuesMag = new double[3];
+    //double[] valuesMag = new double[3];
     double[] valuesLinear = new double[3];
 
     SensorEventListener listener = new SensorEventListener() {
@@ -453,11 +437,11 @@ public class MainActivity extends AppCompatActivity {
                         valuesGyro[i] = event.values[i];
                     }
                     break;
-                case Sensor.TYPE_MAGNETIC_FIELD:
-                    for (int i = 0; i < 3; i++) {
-                        valuesMag[i] = event.values[i];
-                    }
-                    break;
+//                case Sensor.TYPE_MAGNETIC_FIELD:
+//                    for (int i = 0; i < 3; i++) {
+//                        valuesMag[i] = event.values[i];
+//                    }
+//                    break;
                 case Sensor.TYPE_LINEAR_ACCELERATION:
                     for (int i = 0; i < 3; i++) {
                         valuesLinear[i] = event.values[i];
