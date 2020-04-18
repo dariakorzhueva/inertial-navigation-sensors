@@ -4,14 +4,12 @@
 Done:
 * Accelerometr
 * Gyroscope
-* Magnetometer
-* Madgwick filter
-* Mahony filter
-
-Plan:
-* Kalman filter
-* Combine quaternions and movement measurement
-
+* Magnetometer (remove)
+* Simple Moving Area Filter
+* Low Pass Filter
+* Alpha-Beta Filter
+* Madgwick filter (unused)
+* Mahony filter (unused)
 
 ### Instruction
  <hr> 
