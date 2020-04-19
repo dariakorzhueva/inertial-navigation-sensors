@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-        mConstraintLayout = (ConstraintLayout)findViewById(R.id.constraint_layout);
+        mConstraintLayout = (ConstraintLayout) findViewById(R.id.constraint_layout);
         startButton = (Button) findViewById(R.id.btn_start);
 
         tvTime = (TextView) findViewById(R.id.tv_time);
@@ -115,11 +115,11 @@ public class MainActivity extends AppCompatActivity {
 
                     startButton.setText("Стоп");
                     startButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_button_red_state));
-
+                    tvTime.setTextColor(getResources().getColor(R.color.textColorPrimaryDark));
                     mInitTime = System.currentTimeMillis();
 
+                    writeLine(FILE_PATH, "Calibration");
                     createTableHead(FILE_PATH);
-                    createTableHead(FILE_PATH_FILTER);
 
                     flagStatus = true;
 
@@ -127,7 +127,11 @@ public class MainActivity extends AppCompatActivity {
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         public void run() {
-                            calibration();
+                            writeLine(FILE_PATH, "Start of motion recording");
+                            createTableHead(FILE_PATH);
+                            Uri notify = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notify);
+                            r.play();
                             tvTime.setTextColor(getResources().getColor(R.color.colorStart));
                             // Получение текущего времени
                             mInitTime = System.currentTimeMillis();
@@ -146,25 +150,7 @@ public class MainActivity extends AppCompatActivity {
 
                     flagStatus = false;
 
-                    File file = new File(FILE_PATH);
-                    FileWriter fr = null;
-                    BufferedWriter br = null;
-                    try {
-                        fr = new FileWriter(file, true);
-                        br = new BufferedWriter(fr);
-                        br.newLine();
-                        br.append("Stop of motion recording");
-                        br.newLine();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-                        try {
-                            br.close();
-                            fr.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                   writeLine(FILE_PATH,"Stop of motion recording");
 
                     Snackbar.make(v, "Запись в файл " + FILE_NAME + " приостановлена", Snackbar.LENGTH_LONG)
                             .setActionTextColor(Color.GREEN)
@@ -200,25 +186,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        switch (item.getItemId())
-        {
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
             case R.id.maf:
                 flagFilter = 1;
                 createTitle(FILE_PATH_FILTER);
+                createTableHead(FILE_PATH_FILTER);
                 tvFilter.setText("Работает фильтр скользящего среднего");
                 Snackbar.make(mConstraintLayout, "Включен фильтр скользящего среднего", Snackbar.LENGTH_LONG).show();
                 return true;
             case R.id.lpf:
                 flagFilter = 2;
                 createTitle(FILE_PATH_FILTER);
+                createTableHead(FILE_PATH_FILTER);
                 tvFilter.setText("Работает фильтр низких частот");
                 Snackbar.make(mConstraintLayout, "Включен фильтр низких частот", Snackbar.LENGTH_LONG).show();
                 return true;
             case R.id.abf:
                 flagFilter = 3;
                 createTitle(FILE_PATH_FILTER);
+                createTableHead(FILE_PATH_FILTER);
                 tvFilter.setText("Работает альфа-бета фильтр");
                 Snackbar.make(mConstraintLayout, "Включен альфа-бета фильтр", Snackbar.LENGTH_LONG).show();
                 return true;
@@ -241,42 +228,16 @@ public class MainActivity extends AppCompatActivity {
         return System.currentTimeMillis() - mInitTime;
     }
 
-    public void calibration() {
+    public void writeLine(String path, String line) {
         try {
-            File file = new File(FILE_PATH);
+            File file = new File(path);
             FileWriter fr = null;
             BufferedWriter br = null;
             try {
                 fr = new FileWriter(file, true);
                 br = new BufferedWriter(fr);
                 br.newLine();
-                br.append("Start of motion recording");
-                br.newLine();
-                br.append("Time (s)");
-                br.append(",");
-                br.append("aAxisX (m/s2)");
-                br.append(",");
-                br.append("aAxisY (m/s2)");
-                br.append(",");
-                br.append("aAxisZ (m/s2)");
-                br.append(",");
-                br.append("LinAAxisX (m/s2)");
-                br.append(",");
-                br.append("LinAAxisY (m/s2)");
-                br.append(",");
-                br.append("LinAAxisZ (m/s2)");
-                br.append(",");
-                br.append("gRotX (rad/s)");
-                br.append(",");
-                br.append("gRotY (rad/s)");
-                br.append(",");
-                br.append("gRotZ (rad/s)");
-                br.append(",");
-//                br.append("magX (mT)");
-//                br.append(",");
-//                br.append("magY (mT)");
-//                br.append(",");
-//                br.append("magZ (mT)");
+                br.append(line);
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
@@ -288,10 +249,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            // Подаётся сигнал, позволяющий начать движение
-            Uri notify = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notify);
-            r.play();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -305,7 +262,6 @@ public class MainActivity extends AppCompatActivity {
         try {
             fr = new FileWriter(file, true);
             br = new BufferedWriter(fr);
-            br.append("Calibration");
             br.newLine();
             br.append("Time (s)");
             br.append(",");
@@ -353,7 +309,7 @@ public class MainActivity extends AppCompatActivity {
             br = new BufferedWriter(fr);
             br.newLine();
 
-            switch(flagFilter) {
+            switch (flagFilter) {
                 case 1:
                     br.append("Moving Average Filter");
                     break;
@@ -396,7 +352,7 @@ public class MainActivity extends AppCompatActivity {
                             sensTime = getDeltaT() / 1000;
                             writeValues();
 
-                            switch(flagFilter){
+                            switch (flagFilter) {
                                 case 1:
                                     writeMAF();
                                     break;
