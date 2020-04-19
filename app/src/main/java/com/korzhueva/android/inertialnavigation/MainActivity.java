@@ -326,7 +326,7 @@ public class MainActivity extends AppCompatActivity {
             br.append("gRotY (rad/s)");
             br.append(",");
             br.append("gRotZ (rad/s)");
-            br.append(",");
+//            br.append(",");
 //            br.append("magX (mT)");
 //            br.append(",");
 //            br.append("magY (mT)");
