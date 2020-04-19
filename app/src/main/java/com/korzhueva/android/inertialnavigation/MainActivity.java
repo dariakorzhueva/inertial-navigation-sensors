@@ -201,14 +201,17 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId())
         {
             case R.id.maf:
+                createTitle(FILE_PATH_FILTER);
                 flagFilter = 1;
                 Snackbar.make(mConstraintLayout, "Включен фильтр скользящего среднего", Snackbar.LENGTH_LONG).show();
                 return true;
             case R.id.lpf:
+                createTitle(FILE_PATH_FILTER);
                 flagFilter = 2;
                 Snackbar.make(mConstraintLayout, "Включен фильтр низких частот", Snackbar.LENGTH_LONG).show();
                 return true;
             case R.id.abf:
+                createTitle(FILE_PATH_FILTER);
                 flagFilter = 3;
                 Snackbar.make(mConstraintLayout, "Включен альфа-бета фильтр", Snackbar.LENGTH_LONG).show();
                 return true;
@@ -334,6 +337,37 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void createTitle(String path) {
+        File file = new File(path);
+        FileWriter fr = null;
+        BufferedWriter br = null;
+        try {
+            fr = new FileWriter(file, true);
+            br = new BufferedWriter(fr);
+
+            switch(flagFilter) {
+                case 1:
+                    br.append("Moving Average Filter");
+                    break;
+                case 2:
+                    br.append("Low Pass Filter");
+                    break;
+                case 3:
+                    br.append("Alpha-Beta Filter");
+                    break;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                br.close();
+                fr.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -437,8 +471,6 @@ public class MainActivity extends AppCompatActivity {
             fr = new FileWriter(file, true);
             br = new BufferedWriter(fr);
             br.newLine();
-            br.append("Moving Average Filter");
-            br.newLine();
             br.append(String.valueOf(sensTime));
             br.append(',');
             br.append(String.valueOf(mMovingAverageX.update(valuesAccel[0])));
@@ -467,8 +499,6 @@ public class MainActivity extends AppCompatActivity {
             fr = new FileWriter(file, true);
             br = new BufferedWriter(fr);
             br.newLine();
-            br.append("Low Pass Filter");
-            br.newLine();
             br.append(String.valueOf(sensTime));
             br.append(',');
             br.append(String.valueOf(mLowPassFilterX.update(valuesAccel[0])));
@@ -496,8 +526,6 @@ public class MainActivity extends AppCompatActivity {
         try {
             fr = new FileWriter(file, true);
             br = new BufferedWriter(fr);
-            br.newLine();
-            br.append("Alpha-Beta Filter");
             br.newLine();
             br.append(String.valueOf(sensTime));
             br.append(',');
