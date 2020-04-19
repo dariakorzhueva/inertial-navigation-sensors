@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
                                     new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
-                                            openCSVFile(FILE_NAME);
+                                            openCSVFile(FILE_PATH);
                                         }
                                     }).show();
                 }
@@ -215,12 +215,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void openCSVFile(String name) {
-        File file = new File(Environment.getExternalStorageDirectory(), name + " " + dateFormat.format(currentDate) + ".csv");
-        Intent intent = new Intent();
+    private void openCSVFile(String path) {
+        Uri selectedUri = Uri.parse(path);
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(selectedUri, "text/csv");
 
-        intent.setAction(android.content.Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.fromFile(file), "text/csv");
         startActivity(intent);
     }
 
