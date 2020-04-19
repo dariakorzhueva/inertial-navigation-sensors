@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     TextView tvAxis;
     TextView tvRotations;
     TextView tvMagnetic;
+    TextView tvFilter;
 
     ConstraintLayout mConstraintLayout;
 
@@ -103,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         tvTime.setText(String.format("Время: %1$.3f\n", sensTime));
         tvAxis = (TextView) findViewById(R.id.tv_axis);
         tvRotations = (TextView) findViewById(R.id.tv_rotations);
+        tvFilter = (TextView) findViewById(R.id.tv_filter);
         //tvMagnetic = (TextView) findViewById(R.id.tv_magnetic);
 
         startButton.setOnClickListener(new View.OnClickListener() {
@@ -112,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
                     isStart = true;
 
                     startButton.setText("Стоп");
-
                     startButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_button_red_state));
 
                     mInitTime = System.currentTimeMillis();
@@ -127,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
                     handler.postDelayed(new Runnable() {
                         public void run() {
                             calibration();
+                            tvTime.setTextColor(getResources().getColor(R.color.colorStart));
                             // Получение текущего времени
                             mInitTime = System.currentTimeMillis();
                         }
@@ -139,6 +141,8 @@ public class MainActivity extends AppCompatActivity {
                     startButton.setText("Старт");
 
                     startButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_button_green_state));
+
+                    tvTime.setTextColor(getResources().getColor(R.color.colorStop));
 
                     flagStatus = false;
 
@@ -201,18 +205,21 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId())
         {
             case R.id.maf:
-                createTitle(FILE_PATH_FILTER);
                 flagFilter = 1;
+                createTitle(FILE_PATH_FILTER);
+                tvFilter.setText("Работает фильтр скользящего среднего");
                 Snackbar.make(mConstraintLayout, "Включен фильтр скользящего среднего", Snackbar.LENGTH_LONG).show();
                 return true;
             case R.id.lpf:
-                createTitle(FILE_PATH_FILTER);
                 flagFilter = 2;
+                createTitle(FILE_PATH_FILTER);
+                tvFilter.setText("Работает фильтр низких частот");
                 Snackbar.make(mConstraintLayout, "Включен фильтр низких частот", Snackbar.LENGTH_LONG).show();
                 return true;
             case R.id.abf:
-                createTitle(FILE_PATH_FILTER);
                 flagFilter = 3;
+                createTitle(FILE_PATH_FILTER);
+                tvFilter.setText("Работает альфа-бета фильтр");
                 Snackbar.make(mConstraintLayout, "Включен альфа-бета фильтр", Snackbar.LENGTH_LONG).show();
                 return true;
             default:
@@ -344,6 +351,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             fr = new FileWriter(file, true);
             br = new BufferedWriter(fr);
+            br.newLine();
 
             switch(flagFilter) {
                 case 1:
