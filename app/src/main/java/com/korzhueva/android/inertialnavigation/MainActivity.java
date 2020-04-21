@@ -66,9 +66,9 @@ public class MainActivity extends AppCompatActivity {
     LowPassFilter mLowPassFilterY = new LowPassFilter(0.25);
     LowPassFilter mLowPassFilterZ = new LowPassFilter(0.25);
 
-    AlphaBetaFilter mAlphaBetaFilterX = new AlphaBetaFilter();
-    AlphaBetaFilter mAlphaBetaFilterY = new AlphaBetaFilter();
-    AlphaBetaFilter mAlphaBetaFilterZ = new AlphaBetaFilter();
+    AlphaBetaFilter mAlphaBetaFilterX = new AlphaBetaFilter(0.5, 0, 0, 0.85, 0.005);
+    AlphaBetaFilter mAlphaBetaFilterY = new AlphaBetaFilter(0.5, 0, 0, 0.85, 0.005);
+    AlphaBetaFilter mAlphaBetaFilterZ = new AlphaBetaFilter(0.5, 0, 0, 0.85, 0.005);
 
 
     Date currentDate = new Date();
@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
 
                     flagStatus = false;
 
-                   writeLine(FILE_PATH,"Stop of motion recording");
+                    writeLine(FILE_PATH, "Stop of motion recording");
 
                     Snackbar.make(v, "Запись в файл " + FILE_NAME + " приостановлена", Snackbar.LENGTH_LONG)
                             .setActionTextColor(Color.GREEN)
