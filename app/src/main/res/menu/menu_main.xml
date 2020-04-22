@@ -16,4 +16,9 @@
         app:showAsAction="ifRoom|never"
         android:title="@string/alpha_beta_filter_text">
     </item>
+    <item
+        android:id="@+id/css"
+        app:showAsAction="ifRoom|never"
+        android:title="@string/cubic_smooth_spline_text">
+    </item>
 </menu>

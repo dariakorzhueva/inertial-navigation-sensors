@@ -209,6 +209,13 @@ public class MainActivity extends AppCompatActivity {
                 tvFilter.setText("Работает альфа-бета фильтр");
                 Snackbar.make(mConstraintLayout, "Включен альфа-бета фильтр", Snackbar.LENGTH_LONG).show();
                 return true;
+            case R.id.css:
+                flagFilter = 4;
+                createTitle(FILE_PATH_FILTER);
+                createTableHead(FILE_PATH_FILTER);
+                tvFilter.setText("Работает сглаживающий кубический сплайн");
+                Snackbar.make(mConstraintLayout, "Включен сглаживающий кубический сплайн", Snackbar.LENGTH_LONG).show();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -318,6 +325,9 @@ public class MainActivity extends AppCompatActivity {
                 case 3:
                     br.append("Alpha-Beta Filter");
                     break;
+                case 4:
+                    br.append("Cubic smoothing spline");
+                    break;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -360,6 +370,9 @@ public class MainActivity extends AppCompatActivity {
                                     break;
                                 case 3:
                                     writeABF();
+                                    break;
+                                case 4:
+                                    writeCSS();
                                     break;
                             }
 
@@ -497,6 +510,34 @@ public class MainActivity extends AppCompatActivity {
             br.append(String.valueOf(mAlphaBetaFilterY.update(valuesAccel[1])));
             br.append(',');
             br.append(String.valueOf(mAlphaBetaFilterZ.update(valuesAccel[2])));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                br.close();
+                fr.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void writeCSS() {
+        File file = new File(FILE_PATH_FILTER);
+        FileWriter fr = null;
+        BufferedWriter br = null;
+
+        try {
+            fr = new FileWriter(file, true);
+            br = new BufferedWriter(fr);
+            br.newLine();
+            br.append(String.valueOf(sensTime));
+            br.append(',');
+            //br.append(String.valueOf(.update(valuesAccel[0])));
+            br.append(',');
+            //br.append(String.valueOf(.update(valuesAccel[1])));
+            br.append(',');
+            //br.append(String.valueOf(.update(valuesAccel[2])));
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

@@ -3,4 +3,5 @@
     <string name="moving_average_text">MAF</string>
     <string name="low_pass_text">LPF</string>
     <string name="alpha_beta_filter_text">ABF</string>
+    <string name="cubic_smooth_spline_text">CSS</string>
 </resources>
