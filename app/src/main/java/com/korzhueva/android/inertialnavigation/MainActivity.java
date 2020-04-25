@@ -382,7 +382,7 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         };
-        timer.schedule(task, 0, 50);
+        timer.schedule(task, 0, 200);
     }
 
     @Override
