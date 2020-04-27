@@ -58,9 +58,9 @@ public class MainActivity extends AppCompatActivity {
     Sensor sensorMag;
     Sensor sensorLinearAccel;
 
-    MovingAverage mMovingAverageX = new MovingAverage();
-    MovingAverage mMovingAverageY = new MovingAverage();
-    MovingAverage mMovingAverageZ = new MovingAverage();
+    MovingAverage mMovingAverageX = new MovingAverage(3);
+    MovingAverage mMovingAverageY = new MovingAverage(3);
+    MovingAverage mMovingAverageZ = new MovingAverage(3);
 
     LowPassFilter mLowPassFilterX = new LowPassFilter(0.25);
     LowPassFilter mLowPassFilterY = new LowPassFilter(0.25);

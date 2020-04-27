@@ -1,25 +1,30 @@
 package com.korzhueva.android.inertialnavigation.filters;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class MovingAverage {
-    private double sum = 0;
-    private int counter = 0;
+    private final Queue<Double> windowQueue = new LinkedList<Double>();
+    private int period;
+    private double sum;
 
-    public MovingAverage(){
-
+    public MovingAverage(int period) {
+        this.period = period;
     }
 
-    public double update(double current){
-        sum += current;
-        counter++;
+    public double update(double num){
+        sum += num;
+        windowQueue.add(num);
+        if (windowQueue.size() > period) {
+            sum -= windowQueue.remove();
+        }
 
-        double average = sum/counter;
-
-        return average;
+        return sum / windowQueue.size();
     }
 
     public void reset(){
         sum = 0;
-        counter = 0;
+        period = 0;
     }
 
 }
