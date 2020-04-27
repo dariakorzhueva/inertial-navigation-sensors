@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
     private int flagFilter = 0;
     private boolean flagStatus = false;
     private boolean isStart = false;
+    private boolean flagCalibration = true;
 
     private int sdk = android.os.Build.VERSION.SDK_INT;
 
@@ -127,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         public void run() {
+                            flagCalibration = false;
                             writeLine(FILE_PATH, "Start of motion recording");
                             createTableHead(FILE_PATH);
                             Uri notify = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -187,37 +189,42 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.maf:
-                flagFilter = 1;
-                createTitle(FILE_PATH_FILTER);
-                createTableHead(FILE_PATH_FILTER);
-                tvFilter.setText("Работает фильтр скользящего среднего");
-                Snackbar.make(mConstraintLayout, "Включен фильтр скользящего среднего", Snackbar.LENGTH_LONG).show();
-                return true;
-            case R.id.lpf:
-                flagFilter = 2;
-                createTitle(FILE_PATH_FILTER);
-                createTableHead(FILE_PATH_FILTER);
-                tvFilter.setText("Работает фильтр низких частот");
-                Snackbar.make(mConstraintLayout, "Включен фильтр низких частот", Snackbar.LENGTH_LONG).show();
-                return true;
-            case R.id.abf:
-                flagFilter = 3;
-                createTitle(FILE_PATH_FILTER);
-                createTableHead(FILE_PATH_FILTER);
-                tvFilter.setText("Работает альфа-бета фильтр");
-                Snackbar.make(mConstraintLayout, "Включен альфа-бета фильтр", Snackbar.LENGTH_LONG).show();
-                return true;
-            case R.id.css:
-                flagFilter = 4;
-                createTitle(FILE_PATH_FILTER);
-                createTableHead(FILE_PATH_FILTER);
-                tvFilter.setText("Работает сглаживающий кубический сплайн");
-                Snackbar.make(mConstraintLayout, "Включен сглаживающий кубический сплайн", Snackbar.LENGTH_LONG).show();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (!flagCalibration) {
+            switch (item.getItemId()) {
+                case R.id.maf:
+                    flagFilter = 1;
+                    createTitle(FILE_PATH_FILTER);
+                    createTableHead(FILE_PATH_FILTER);
+                    tvFilter.setText("Работает фильтр скользящего среднего");
+                    Snackbar.make(mConstraintLayout, "Включен фильтр скользящего среднего", Snackbar.LENGTH_LONG).show();
+                    return true;
+                case R.id.lpf:
+                    flagFilter = 2;
+                    createTitle(FILE_PATH_FILTER);
+                    createTableHead(FILE_PATH_FILTER);
+                    tvFilter.setText("Работает фильтр низких частот");
+                    Snackbar.make(mConstraintLayout, "Включен фильтр низких частот", Snackbar.LENGTH_LONG).show();
+                    return true;
+                case R.id.abf:
+                    flagFilter = 3;
+                    createTitle(FILE_PATH_FILTER);
+                    createTableHead(FILE_PATH_FILTER);
+                    tvFilter.setText("Работает альфа-бета фильтр");
+                    Snackbar.make(mConstraintLayout, "Включен альфа-бета фильтр", Snackbar.LENGTH_LONG).show();
+                    return true;
+                case R.id.css:
+                    flagFilter = 4;
+                    createTitle(FILE_PATH_FILTER);
+                    createTableHead(FILE_PATH_FILTER);
+                    tvFilter.setText("Работает сглаживающий кубический сплайн");
+                    Snackbar.make(mConstraintLayout, "Включен сглаживающий кубический сплайн", Snackbar.LENGTH_LONG).show();
+                    return true;
+                default:
+                    return super.onOptionsItemSelected(item);
+            }
+        } else {
+            tvFilter.setText("Дождитесь завершения калибровки!");
+            return super.onOptionsItemSelected(item);
         }
     }
 
