@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
     Timer timer;
 
     private static String FILE_NAME = "sensorsValues";
-    public static String FILE_NAME_FILTER = "filterValues";
+    public static String FILE_NAME_FILTER = "filtersValues";
     private static String FILE_PATH = "";
     private static String FILE_PATH_FILTER = "";
     private static final int REQUEST_PERMISSION_WRITE = 1001;
