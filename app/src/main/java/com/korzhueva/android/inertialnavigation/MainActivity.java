@@ -366,20 +366,20 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         if (flagStatus) {
                             sensTime = getDeltaT() / 1000;
-                            writeValues();
+                            writeValues(FILE_PATH);
 
                             switch (flagFilter) {
                                 case 1:
-                                    writeMAF();
+                                    writeMAF(FILE_PATH_FILTER);
                                     break;
                                 case 2:
-                                    writeLPF();
+                                    writeLPF(FILE_PATH_FILTER);
                                     break;
                                 case 3:
-                                    writeABF();
+                                    writeABF(FILE_PATH_FILTER);
                                     break;
                                 case 4:
-                                    writeCSS();
+                                    writeCSS(FILE_PATH_FILTER);
                                     break;
                             }
 
@@ -399,8 +399,8 @@ public class MainActivity extends AppCompatActivity {
         timer.cancel();
     }
 
-    public void writeValues() {
-        File file = new File(FILE_PATH);
+    public void writeValues(String path) {
+        File file = new File(path);
         FileWriter fr = null;
         BufferedWriter br = null;
         try {
@@ -445,8 +445,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void writeMAF() {
-        File file = new File(FILE_PATH_FILTER);
+    public void writeMAF(String path) {
+        File file = new File(path);
         FileWriter fr = null;
         BufferedWriter br = null;
 
@@ -473,8 +473,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void writeLPF() {
-        File file = new File(FILE_PATH_FILTER);
+    public void writeLPF(String path) {
+        File file = new File(path);
         FileWriter fr = null;
         BufferedWriter br = null;
 
@@ -501,8 +501,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void writeABF() {
-        File file = new File(FILE_PATH_FILTER);
+    public void writeABF(String path) {
+        File file = new File(path);
         FileWriter fr = null;
         BufferedWriter br = null;
 
@@ -529,8 +529,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void writeCSS() {
-        File file = new File(FILE_PATH_FILTER);
+    public void writeCSS(String path) {
+        File file = new File(path);
         FileWriter fr = null;
         BufferedWriter br = null;
 
