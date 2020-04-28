@@ -4,5 +4,5 @@
     <string name="text_low_pass">LPF</string>
     <string name="text_alpha_beta_filter">ABF</string>
     <string name="text_cubic_smooth_spline">CSS</string>
-    <string name="text_all">дд</string>
+    <string name="text_all">All</string>
 </resources>

@@ -164,7 +164,6 @@ public class MainActivity extends AppCompatActivity {
                     }, 5000);
 
                     String filename = FILE_PATH;
-                    Log.d("huinya", filename);
                     filename = filename.replaceFirst(".*/(\\w+)","$1");
 
                     Snackbar.make(v, "Началась запись в файл " + filename, Snackbar.LENGTH_LONG).show();
