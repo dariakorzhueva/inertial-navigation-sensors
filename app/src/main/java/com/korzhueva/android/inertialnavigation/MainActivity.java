@@ -20,6 +20,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -78,15 +79,23 @@ public class MainActivity extends AppCompatActivity {
     Timer timer;
 
     private static String FILE_NAME = "sensorsValues";
-    public static String FILE_NAME_FILTER = "filtersValues";
+    private static String FILE_NAME_MAF = "MAF";
+    private static String FILE_NAME_LPF = "LPF";
+    private static String FILE_NAME_ABF = "ABF";
+    private static String FILE_NAME_CSS = "CSS";
+
     private static String FILE_PATH = "";
-    private static String FILE_PATH_FILTER = "";
+    private static String FILE_PATH_MAF = "";
+    private static String FILE_PATH_LPF = "";
+    private static String FILE_PATH_ABF = "";
+    private static String FILE_PATH_CSS = "";
+
     private static final int REQUEST_PERMISSION_WRITE = 1001;
 
     StringBuilder sb = new StringBuilder();
     private boolean permissionGranted;
 
-    private int flagFilter = 0;
+    private int flagFilter = -1;
     private boolean flagStatus = false;
     private boolean isStart = false;
     private boolean flagCalibration = true;
@@ -112,6 +121,20 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!isStart) {
+                    FILE_PATH = "";
+                    FILE_PATH_MAF = "";
+                    FILE_PATH_LPF = "";
+                    FILE_PATH_ABF = "";
+                    FILE_PATH_CSS = "";
+
+                    currentDate = new Date();
+                    FILE_PATH = getExternalPath(FILE_NAME);
+
+                    FILE_PATH_MAF = getExternalPath(FILE_NAME_MAF);
+                    FILE_PATH_LPF = getExternalPath(FILE_NAME_LPF);
+                    FILE_PATH_ABF = getExternalPath(FILE_NAME_ABF);
+                    FILE_PATH_CSS = getExternalPath(FILE_NAME_CSS);
+
                     isStart = true;
 
                     startButton.setText("Стоп");
@@ -140,7 +163,11 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }, 5000);
 
-                    Snackbar.make(v, "Началась запись в файл " + FILE_NAME, Snackbar.LENGTH_LONG).show();
+                    String filename = FILE_PATH;
+                    Log.d("huinya", filename);
+                    filename = filename.replaceFirst(".*/(\\w+)","$1");
+
+                    Snackbar.make(v, "Началась запись в файл " + filename, Snackbar.LENGTH_LONG).show();
                 } else {
                     isStart = false;
 
@@ -154,7 +181,10 @@ public class MainActivity extends AppCompatActivity {
 
                     writeLine(FILE_PATH, "Stop of motion recording");
 
-                    Snackbar.make(v, "Запись в файл " + FILE_NAME + " приостановлена", Snackbar.LENGTH_LONG)
+                    String filename = FILE_PATH;
+                    filename = filename.replaceFirst(".*/(\\w+)","$1");
+
+                    Snackbar.make(v, "Приостановлена запись в файл " + filename, Snackbar.LENGTH_LONG)
                             .setActionTextColor(Color.GREEN)
                             .setAction("Открыть файл",
                                     new View.OnClickListener() {
@@ -169,10 +199,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (!permissionGranted)
             checkPermissions();
-
-        FILE_PATH = getExternalPath(FILE_PATH, FILE_NAME);
-
-        FILE_PATH_FILTER = getExternalPath(FILE_PATH_FILTER, FILE_NAME_FILTER);
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sensorAccel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -193,31 +219,49 @@ public class MainActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.maf:
                     flagFilter = 1;
-                    createTitle(FILE_PATH_FILTER);
-                    createTableHead(FILE_PATH_FILTER);
+                    writeLine(FILE_PATH_MAF, "Moving Average Filter");
+                    createTableHead(FILE_PATH_MAF);
                     tvFilter.setText("Работает фильтр скользящего среднего");
                     Snackbar.make(mConstraintLayout, "Включен фильтр скользящего среднего", Snackbar.LENGTH_LONG).show();
                     return true;
                 case R.id.lpf:
                     flagFilter = 2;
-                    createTitle(FILE_PATH_FILTER);
-                    createTableHead(FILE_PATH_FILTER);
+                    writeLine(FILE_PATH_LPF, "Low-Pass Filter");
+                    createTableHead(FILE_PATH_LPF);
                     tvFilter.setText("Работает фильтр низких частот");
                     Snackbar.make(mConstraintLayout, "Включен фильтр низких частот", Snackbar.LENGTH_LONG).show();
                     return true;
                 case R.id.abf:
                     flagFilter = 3;
-                    createTitle(FILE_PATH_FILTER);
-                    createTableHead(FILE_PATH_FILTER);
+                    writeLine(FILE_PATH_ABF, "Alpha-Beta Filter");
+                    createTableHead(FILE_PATH_ABF);
                     tvFilter.setText("Работает альфа-бета фильтр");
                     Snackbar.make(mConstraintLayout, "Включен альфа-бета фильтр", Snackbar.LENGTH_LONG).show();
                     return true;
                 case R.id.css:
                     flagFilter = 4;
-                    createTitle(FILE_PATH_FILTER);
-                    createTableHead(FILE_PATH_FILTER);
+                    writeLine(FILE_PATH_CSS, "Cubic Smoothing Spline");
+                    createTableHead(FILE_PATH_CSS);
                     tvFilter.setText("Работает сглаживающий кубический сплайн");
                     Snackbar.make(mConstraintLayout, "Включен сглаживающий кубический сплайн", Snackbar.LENGTH_LONG).show();
+                    return true;
+                case R.id.all:
+                    flagFilter = 0;
+
+                    writeLine(FILE_PATH_MAF, "Moving Average Filter");
+                    createTableHead(FILE_PATH_MAF);
+
+                    writeLine(FILE_PATH_LPF, "Low-Pass Filter");
+                    createTableHead(FILE_PATH_LPF);
+
+                    writeLine(FILE_PATH_ABF, "Alpha-Beta Filter");
+                    createTableHead(FILE_PATH_ABF);
+
+                    //writeLine(FILE_PATH_CSS, "Cubic Smoothing Spline");
+                    //createTableHead(FILE_PATH_CSS);
+
+                    tvFilter.setText("Работают все фильтры");
+                    Snackbar.make(mConstraintLayout, "Включены всех фильтры", Snackbar.LENGTH_LONG).show();
                     return true;
                 default:
                     return super.onOptionsItemSelected(item);
@@ -313,41 +357,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void createTitle(String path) {
-        File file = new File(path);
-        FileWriter fr = null;
-        BufferedWriter br = null;
-        try {
-            fr = new FileWriter(file, true);
-            br = new BufferedWriter(fr);
-            br.newLine();
-
-            switch (flagFilter) {
-                case 1:
-                    br.append("Moving Average Filter");
-                    break;
-                case 2:
-                    br.append("Low Pass Filter");
-                    break;
-                case 3:
-                    br.append("Alpha-Beta Filter");
-                    break;
-                case 4:
-                    br.append("Cubic smoothing spline");
-                    break;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                br.close();
-                fr.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -369,17 +378,25 @@ public class MainActivity extends AppCompatActivity {
                             writeValues(FILE_PATH);
 
                             switch (flagFilter) {
+                                case 0:
+                                    writeMAF(FILE_PATH_MAF);
+                                    writeLPF(FILE_PATH_LPF);
+                                    writeABF(FILE_PATH_ABF);
+                                    writeABF(FILE_PATH_CSS);
+                                    break;
                                 case 1:
-                                    writeMAF(FILE_PATH_FILTER);
+                                    writeMAF(FILE_PATH_MAF);
                                     break;
                                 case 2:
-                                    writeLPF(FILE_PATH_FILTER);
+                                    writeLPF(FILE_PATH_LPF);
                                     break;
                                 case 3:
-                                    writeABF(FILE_PATH_FILTER);
+                                    writeABF(FILE_PATH_ABF);
                                     break;
                                 case 4:
-                                    writeCSS(FILE_PATH_FILTER);
+                                    writeCSS(FILE_PATH_CSS);
+                                    break;
+                                case -1:
                                     break;
                             }
 
@@ -613,10 +630,10 @@ public class MainActivity extends AppCompatActivity {
     };
 
     // Маска итогового файла: sensorsValues XXXX.XX.XX XX-XX-XX.csv
-    private String getExternalPath(String path, String name) {
+    private String getExternalPath(String name) {
         File storage = Environment.getExternalStorageDirectory();
         name = name + " " + dateFormat.format(currentDate) + ".csv";
-        path = storage + "/" + name;
+        String path = storage + "/" + name;
 
         return path;
     }

@@ -1,4 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/maf"
+        app:showAsAction="ifRoom|never"
+        android:title="@string/text_moving_average">
+    </item>
+    <item
+        android:id="@+id/lpf"
+        app:showAsAction="ifRoom|never"
+        android:title="@string/text_low_pass">
+    </item>
+    <item
+        android:id="@+id/abf"
+        app:showAsAction="ifRoom|never"
+        android:title="@string/text_alpha_beta_filter">
+    </item>
+    <item
+        android:id="@+id/css"
+        app:showAsAction="ifRoom|never"
+        android:title="@string/text_cubic_smooth_spline">
+    </item>
+    <item
+        android:id="@+id/all"
+        app:showAsAction="ifRoom|never"
+        android:title="@string/text_all">
+    </item>
 </menu>

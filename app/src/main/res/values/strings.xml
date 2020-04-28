@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">Inertial Navigation</string>
-    <string name="moving_average_text">MAF</string>
-    <string name="low_pass_text">LPF</string>
-    <string name="alpha_beta_filter_text">ABF</string>
-    <string name="cubic_smooth_spline_text">CSS</string>
+    <string name="text_moving_average">MAF</string>
+    <string name="text_low_pass">LPF</string>
+    <string name="text_alpha_beta_filter">ABF</string>
+    <string name="text_cubic_smooth_spline">CSS</string>
+    <string name="text_all">дд</string>
 </resources>
