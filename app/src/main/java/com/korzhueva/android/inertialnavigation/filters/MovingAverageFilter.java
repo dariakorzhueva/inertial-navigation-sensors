@@ -3,12 +3,12 @@ package com.korzhueva.android.inertialnavigation.filters;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class MovingAverage {
+public class MovingAverageFilter {
     private final Queue<Double> windowQueue = new LinkedList<Double>();
     private int period;
     private double sum;
 
-    public MovingAverage(int period) {
+    public MovingAverageFilter(int period) {
         this.period = period;
     }
 
@@ -25,6 +25,7 @@ public class MovingAverage {
     public void reset(){
         sum = 0;
         period = 0;
+        windowQueue.clear();
     }
 
 }

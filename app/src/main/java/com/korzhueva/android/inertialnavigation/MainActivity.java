@@ -20,7 +20,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,7 +29,7 @@ import android.widget.Toast;
 
 import com.korzhueva.android.inertialnavigation.filters.AlphaBetaFilter;
 import com.korzhueva.android.inertialnavigation.filters.LowPassFilter;
-import com.korzhueva.android.inertialnavigation.filters.MovingAverage;
+import com.korzhueva.android.inertialnavigation.filters.MovingAverageFilter;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -59,9 +58,9 @@ public class MainActivity extends AppCompatActivity {
     Sensor sensorMag;
     Sensor sensorLinearAccel;
 
-    MovingAverage mMovingAverageX = new MovingAverage(3);
-    MovingAverage mMovingAverageY = new MovingAverage(3);
-    MovingAverage mMovingAverageZ = new MovingAverage(3);
+    MovingAverageFilter mMovingAverageFilterX = new MovingAverageFilter(3);
+    MovingAverageFilter mMovingAverageFilterY = new MovingAverageFilter(3);
+    MovingAverageFilter mMovingAverageFilterZ = new MovingAverageFilter(3);
 
     LowPassFilter mLowPassFilterX = new LowPassFilter(0.25);
     LowPassFilter mLowPassFilterY = new LowPassFilter(0.25);
@@ -472,11 +471,11 @@ public class MainActivity extends AppCompatActivity {
             br.newLine();
             br.append(String.valueOf(sensTime));
             br.append(',');
-            br.append(String.valueOf(mMovingAverageX.update(valuesAccel[0])));
+            br.append(String.valueOf(mMovingAverageFilterX.update(valuesAccel[0])));
             br.append(',');
-            br.append(String.valueOf(mMovingAverageY.update(valuesAccel[1])));
+            br.append(String.valueOf(mMovingAverageFilterY.update(valuesAccel[1])));
             br.append(',');
-            br.append(String.valueOf(mMovingAverageZ.update(valuesAccel[2])));
+            br.append(String.valueOf(mMovingAverageFilterZ.update(valuesAccel[2])));
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

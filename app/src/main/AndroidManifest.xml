@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.korzhueva.android.inertialnavigation">
+    <uses-feature android:name="android.hardware.accelerometer" android:required="false" />
+    <uses-feature android:name="android.hardware.gyroscope" android:required="false" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <application
