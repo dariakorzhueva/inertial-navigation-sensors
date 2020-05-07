@@ -20,4 +20,10 @@ public class LowPassFilter {
         prev = next;
         return next;
     }
+
+    public void reset(){
+        alpha = 0;
+        prev = 0;
+        begin = false;
+    }
 }
