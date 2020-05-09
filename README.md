@@ -14,12 +14,12 @@ Done:
 ### Instruction
  <hr> 
  
- ![Start](https://github.com/DariaKorzhueva/InertialNavigationAndroid/blob/update_interface/images/start.png)  
+ ![Start](https://github.com/DariaKorzhueva/InertialNavigationAndroid/blob/update_interface/images/Start.jpg)  
  To start recording the readings, click **Start**.  
 
 After clicking **Start** wait for sound notification and after that start moving.
 
- ![Stop](https://github.com/DariaKorzhueva/InertialNavigationAndroid/blob/update_interface/images/stop.png)  
+ ![Stop](https://github.com/DariaKorzhueva/InertialNavigationAndroid/blob/update_interface/images/Stop.jpg)  
 To stop recording the readings, click **Stop**.  
 
 
