@@ -13,13 +13,16 @@ Done:
 
 ### Instruction
  <hr> 
- To start recording the readings, click **Start**.  
+ 
+ To start recording, click **Start**.  
+ 
  After clicking **Start** wait for sound notification and after that start moving.
- To stop recording the readings, click **Stop**. 
+ 
+ To stop recording, click **Stop**. 
  
  ![Start](https://github.com/DariaKorzhueva/InertialNavigationAndroid/blob/update_interface/images/Start.jpg)   ![Stop](https://github.com/DariaKorzhueva/InertialNavigationAndroid/blob/update_interface/images/Stop.jpg)  
 
- Data wil be saved into csv file with timestamped.
+ Data will be saved into csv file with timestamped in root of your internal storage.
  
  ![Save to file](https://github.com/dariakorzhueva/InertialNavigationAndroid/blob/update_interface/images/WriteToFile.jpg) ![Row Data](https://github.com/dariakorzhueva/InertialNavigationAndroid/blob/update_interface/images/DataFile.jpg)
 
