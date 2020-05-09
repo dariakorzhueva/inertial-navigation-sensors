@@ -13,15 +13,20 @@ Done:
 
 ### Instruction
  <hr> 
- 
- ![Start](https://github.com/DariaKorzhueva/InertialNavigationAndroid/blob/update_interface/images/Start.jpg)  
  To start recording the readings, click **Start**.  
+ After clicking **Start** wait for sound notification and after that start moving.
+ To stop recording the readings, click **Stop**. 
+ 
+ ![Start](https://github.com/DariaKorzhueva/InertialNavigationAndroid/blob/update_interface/images/Start.jpg)   ![Stop](https://github.com/DariaKorzhueva/InertialNavigationAndroid/blob/update_interface/images/Stop.jpg)  
 
-After clicking **Start** wait for sound notification and after that start moving.
+ Data wil be saved into csv file with timestamped.
+ 
+ ![Save to file](https://github.com/dariakorzhueva/InertialNavigationAndroid/blob/update_interface/images/WriteToFile.jpg) ![Row Data](https://github.com/dariakorzhueva/InertialNavigationAndroid/blob/update_interface/images/DataFile.jpg)
 
- ![Stop](https://github.com/DariaKorzhueva/InertialNavigationAndroid/blob/update_interface/images/Stop.jpg)  
-To stop recording the readings, click **Stop**.  
+ You can also enable the filter. Or you can enable all filters.
+ 
+ ![Filter On](https://github.com/dariakorzhueva/InertialNavigationAndroid/blob/update_interface/images/FilterOn.jpg) ![Choose filter](https://github.com/dariakorzhueva/InertialNavigationAndroid/blob/update_interface/images/Filters.jpg)
 
-
- ![Save to file](https://github.com/DariaKorzhueva/InertialNavigationAndroid/blob/update_interface/images/save_to_file.png)
- ![Csv](https://github.com/DariaKorzhueva/InertialNavigationAndroid/blob/update_interface/images/csv_file.png)
+ Data wil be saved into csv file with timestamped but in filter's file.
+ 
+ ![Filter's file](https://github.com/dariakorzhueva/InertialNavigationAndroid/blob/update_interface/images/FiltersFile.jpg)
