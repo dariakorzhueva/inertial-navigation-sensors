@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import com.korzhueva.android.inertialnavigation.filters.AlphaBetaFilter;
 import com.korzhueva.android.inertialnavigation.filters.LowPassFilter;
+import com.korzhueva.android.inertialnavigation.filters.MedianFilter;
 import com.korzhueva.android.inertialnavigation.filters.MovingAverageFilter;
 
 import java.io.BufferedWriter;
@@ -66,6 +67,10 @@ public class MainActivity extends AppCompatActivity {
     LowPassFilter mLowPassFilterY = new LowPassFilter(0.25);
     LowPassFilter mLowPassFilterZ = new LowPassFilter(0.25);
 
+    MedianFilter mMedianFilterX = new MedianFilter(3);
+    MedianFilter mMedianFilterY = new MedianFilter(3);
+    MedianFilter mMedianFilterZ = new MedianFilter(3);
+
     AlphaBetaFilter mAlphaBetaFilterX = new AlphaBetaFilter(0.5, 0, 0, 0.85, 0.005);
     AlphaBetaFilter mAlphaBetaFilterY = new AlphaBetaFilter(0.5, 0, 0, 0.85, 0.005);
     AlphaBetaFilter mAlphaBetaFilterZ = new AlphaBetaFilter(0.5, 0, 0, 0.85, 0.005);
@@ -80,14 +85,14 @@ public class MainActivity extends AppCompatActivity {
     private static String FILE_NAME = "sensorsValues";
     private static String FILE_NAME_MAF = "MAF";
     private static String FILE_NAME_LPF = "LPF";
+    private static String FILE_NAME_MF = "MF";
     private static String FILE_NAME_ABF = "ABF";
-    private static String FILE_NAME_CSS = "CSS";
 
     private static String FILE_PATH = "";
     private static String FILE_PATH_MAF = "";
     private static String FILE_PATH_LPF = "";
+    private static String FILE_PATH_MF = "";
     private static String FILE_PATH_ABF = "";
-    private static String FILE_PATH_CSS = "";
 
     private static final int REQUEST_PERMISSION_WRITE = 1001;
 
@@ -123,16 +128,16 @@ public class MainActivity extends AppCompatActivity {
                     FILE_PATH = "";
                     FILE_PATH_MAF = "";
                     FILE_PATH_LPF = "";
+                    FILE_PATH_MF = "";
                     FILE_PATH_ABF = "";
-                    FILE_PATH_CSS = "";
 
                     currentDate = new Date();
                     FILE_PATH = getExternalPath(FILE_NAME);
 
                     FILE_PATH_MAF = getExternalPath(FILE_NAME_MAF);
                     FILE_PATH_LPF = getExternalPath(FILE_NAME_LPF);
+                    FILE_PATH_MF = getExternalPath(FILE_NAME_MF);
                     FILE_PATH_ABF = getExternalPath(FILE_NAME_ABF);
-                    FILE_PATH_CSS = getExternalPath(FILE_NAME_CSS);
 
                     isStart = true;
 
@@ -229,19 +234,19 @@ public class MainActivity extends AppCompatActivity {
                     tvFilter.setText("Работает фильтр низких частот");
                     Snackbar.make(mConstraintLayout, "Включен фильтр низких частот", Snackbar.LENGTH_LONG).show();
                     return true;
-                case R.id.abf:
+                case R.id.mf:
                     flagFilter = 3;
+                    writeLine(FILE_PATH_MF, "Median Filter");
+                    createTableHead(FILE_PATH_MF);
+                    tvFilter.setText("Работает медианный фильтр");
+                    Snackbar.make(mConstraintLayout, "Включен медианный фильтр", Snackbar.LENGTH_LONG).show();
+                    return true;
+                case R.id.abf:
+                    flagFilter = 4;
                     writeLine(FILE_PATH_ABF, "Alpha-Beta Filter");
                     createTableHead(FILE_PATH_ABF);
                     tvFilter.setText("Работает альфа-бета фильтр");
                     Snackbar.make(mConstraintLayout, "Включен альфа-бета фильтр", Snackbar.LENGTH_LONG).show();
-                    return true;
-                case R.id.css:
-                    flagFilter = 4;
-                    writeLine(FILE_PATH_CSS, "Cubic Smoothing Spline");
-                    createTableHead(FILE_PATH_CSS);
-                    tvFilter.setText("Работает сглаживающий кубический сплайн");
-                    Snackbar.make(mConstraintLayout, "Включен сглаживающий кубический сплайн", Snackbar.LENGTH_LONG).show();
                     return true;
                 case R.id.all:
                     flagFilter = 0;
@@ -252,11 +257,11 @@ public class MainActivity extends AppCompatActivity {
                     writeLine(FILE_PATH_LPF, "Low-Pass Filter");
                     createTableHead(FILE_PATH_LPF);
 
+                    writeLine(FILE_PATH_MF, "Median Filter");
+                    createTableHead(FILE_PATH_MF);
+
                     writeLine(FILE_PATH_ABF, "Alpha-Beta Filter");
                     createTableHead(FILE_PATH_ABF);
-
-                    //writeLine(FILE_PATH_CSS, "Cubic Smoothing Spline");
-                    //createTableHead(FILE_PATH_CSS);
 
                     tvFilter.setText("Работают все фильтры");
                     Snackbar.make(mConstraintLayout, "Включены всех фильтры", Snackbar.LENGTH_LONG).show();
@@ -379,8 +384,8 @@ public class MainActivity extends AppCompatActivity {
                                 case 0:
                                     writeMAF(FILE_PATH_MAF);
                                     writeLPF(FILE_PATH_LPF);
+                                    writeABF(FILE_PATH_MF);
                                     writeABF(FILE_PATH_ABF);
-                                    writeABF(FILE_PATH_CSS);
                                     break;
                                 case 1:
                                     writeMAF(FILE_PATH_MAF);
@@ -389,10 +394,10 @@ public class MainActivity extends AppCompatActivity {
                                     writeLPF(FILE_PATH_LPF);
                                     break;
                                 case 3:
-                                    writeABF(FILE_PATH_ABF);
+                                    writeMF(FILE_PATH_MF);
                                     break;
                                 case 4:
-                                    writeCSS(FILE_PATH_CSS);
+                                    writeABF(FILE_PATH_ABF);
                                     break;
                                 case -1:
                                     break;
@@ -544,7 +549,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void writeCSS(String path) {
+    public void writeMF(String path) {
         File file = new File(path);
         FileWriter fr = null;
         BufferedWriter br = null;
@@ -555,11 +560,11 @@ public class MainActivity extends AppCompatActivity {
             br.newLine();
             br.append(String.valueOf(sensTime));
             br.append(',');
-            //br.append(String.valueOf(.update(valuesAccel[0])));
+            br.append(String.valueOf(mMedianFilterX.update(valuesAccel[0])));
             br.append(',');
-            //br.append(String.valueOf(.update(valuesAccel[1])));
+            br.append(String.valueOf(mMedianFilterY.update(valuesAccel[1])));
             br.append(',');
-            //br.append(String.valueOf(.update(valuesAccel[2])));
+            br.append(String.valueOf(mMedianFilterZ.update(valuesAccel[2])));
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -572,12 +577,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    String format(double values[]) {
+    private String format(double values[]) {
         return String.format("X: %2$.8f\tY: %3$.8f\tZ: %4$.8f", sensTime, values[0], values[1],
                 values[2]);
     }
 
-    void showInfo() {
+    private void showInfo() {
         tvTime.setText(String.format("Время: %1$.3f\n", sensTime));
 
         tvAxis.setText("Акселерометр\n" + format(valuesAccel));

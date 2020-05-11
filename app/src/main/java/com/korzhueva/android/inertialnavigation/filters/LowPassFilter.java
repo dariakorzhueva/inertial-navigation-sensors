@@ -6,7 +6,7 @@ public class LowPassFilter {
     private boolean begin = true;
 
     public LowPassFilter(double coefficient) {
-        alpha = coefficient;
+        this.alpha = coefficient;
     }
 
     public double update(double current) {
