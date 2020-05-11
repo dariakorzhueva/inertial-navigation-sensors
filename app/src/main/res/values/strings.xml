@@ -2,7 +2,7 @@
     <string name="app_name">Inertial Navigation</string>
     <string name="text_moving_average">MAF</string>
     <string name="text_low_pass">LPF</string>
+    <string name="text_median_filter">MF</string>
     <string name="text_alpha_beta_filter">ABF</string>
-    <string name="text_cubic_smooth_spline">CSS</string>
     <string name="text_all">All</string>
 </resources>

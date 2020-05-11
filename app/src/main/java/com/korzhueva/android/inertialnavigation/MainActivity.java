@@ -76,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
     AlphaBetaFilter mAlphaBetaFilterY = new AlphaBetaFilter(0.5, 0, 0, 0.85, 0.005);
     AlphaBetaFilter mAlphaBetaFilterZ = new AlphaBetaFilter(0.5, 0, 0, 0.85, 0.005);
 
-
     Date currentDate = new Date();
     DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH-mm-ss");
     private double mInitTime;
@@ -184,6 +183,22 @@ public class MainActivity extends AppCompatActivity {
                     flagStatus = false;
 
                     writeLine(FILE_PATH, "Stop of motion recording");
+
+                    mMovingAverageFilterX.reset();
+                    mMovingAverageFilterY.reset();
+                    mMovingAverageFilterZ.reset();
+
+                    mLowPassFilterX.reset();
+                    mLowPassFilterY.reset();
+                    mLowPassFilterZ.reset();
+
+                    mMedianFilterX.reset();
+                    mMedianFilterY.reset();
+                    mMedianFilterZ.reset();
+
+                    mAlphaBetaFilterX.reset();
+                    mAlphaBetaFilterY.reset();
+                    mAlphaBetaFilterZ.reset();
 
                     String filename = FILE_PATH;
                     filename = filename.replaceFirst(".*/(\\w+)","$1");

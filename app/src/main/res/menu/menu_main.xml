@@ -14,7 +14,7 @@
     <item
         android:id="@+id/mf"
         app:showAsAction="ifRoom|never"
-        android:title="@string/text_cubic_smooth_spline">
+        android:title="@string/text_median_filter">
     </item>
     <item
         android:id="@+id/abf"
