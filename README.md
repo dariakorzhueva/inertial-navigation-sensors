@@ -5,8 +5,9 @@ Done:
 * Accelerometr
 * Gyroscope
 * Magnetometer (remove)
-* Simple Moving Area Filter
+* Simple Moving Average Filter
 * Low Pass Filter
+* Median Filter
 * Alpha-Beta Filter
 * Madgwick filter (unused)
 * Mahony filter (unused)
