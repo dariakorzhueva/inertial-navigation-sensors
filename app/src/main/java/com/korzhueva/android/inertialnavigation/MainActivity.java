@@ -312,7 +312,6 @@ public class MainActivity extends AppCompatActivity {
             try {
                 fr = new FileWriter(file, true);
                 br = new BufferedWriter(fr);
-                br.newLine();
                 br.append(line);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -516,6 +515,7 @@ public class MainActivity extends AppCompatActivity {
             br.append(String.valueOf(filter.update(valuesAccel[1])));
             br.append(',');
             br.append(String.valueOf(filter.update(valuesAccel[2])));
+            br.newLine();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
