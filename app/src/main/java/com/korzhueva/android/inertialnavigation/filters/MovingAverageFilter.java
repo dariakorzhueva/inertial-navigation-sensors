@@ -3,7 +3,7 @@ package com.korzhueva.android.inertialnavigation.filters;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class MovingAverageFilter {
+public class MovingAverageFilter implements FilterInterface{
     private final Queue<Double> windowQueue = new LinkedList<Double>();
     private int period;
     private double sum;

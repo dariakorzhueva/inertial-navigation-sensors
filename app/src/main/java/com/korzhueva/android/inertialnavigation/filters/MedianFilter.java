@@ -1,6 +1,6 @@
 package com.korzhueva.android.inertialnavigation.filters;
 
-public class MedianFilter {
+public class MedianFilter implements FilterInterface{
     private int window;
     private double[] values;
     private int count = 0;

@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.korzhueva.android.inertialnavigation.filters.AlphaBetaFilter;
+import com.korzhueva.android.inertialnavigation.filters.FilterInterface;
 import com.korzhueva.android.inertialnavigation.filters.LowPassFilter;
 import com.korzhueva.android.inertialnavigation.filters.MedianFilter;
 import com.korzhueva.android.inertialnavigation.filters.MovingAverageFilter;
@@ -382,22 +383,41 @@ public class MainActivity extends AppCompatActivity {
 
                             switch (flagFilter) {
                                 case 0:
-                                    writeMAF(FILE_PATH_MAF);
-                                    writeLPF(FILE_PATH_LPF);
-                                    writeABF(FILE_PATH_MF);
-                                    writeABF(FILE_PATH_ABF);
+                                    writeFilteredValues(mMovingAverageFilterX, FILE_PATH_MAF);
+                                    writeFilteredValues(mMovingAverageFilterY, FILE_PATH_MAF);
+                                    writeFilteredValues(mMovingAverageFilterZ, FILE_PATH_MAF);
+
+                                    writeFilteredValues(mLowPassFilterX, FILE_PATH_LPF);
+                                    writeFilteredValues(mLowPassFilterY, FILE_PATH_LPF);
+                                    writeFilteredValues(mLowPassFilterZ, FILE_PATH_LPF);
+
+                                    writeFilteredValues(mMedianFilterX, FILE_PATH_MF);
+                                    writeFilteredValues(mMedianFilterY, FILE_PATH_MF);
+                                    writeFilteredValues(mMedianFilterZ, FILE_PATH_MF);
+
+                                    writeFilteredValues(mAlphaBetaFilterX,FILE_PATH_ABF);
+                                    writeFilteredValues(mAlphaBetaFilterY,FILE_PATH_ABF);
+                                    writeFilteredValues(mAlphaBetaFilterZ,FILE_PATH_ABF);
                                     break;
                                 case 1:
-                                    writeMAF(FILE_PATH_MAF);
+                                    writeFilteredValues(mMovingAverageFilterX, FILE_PATH_MAF);
+                                    writeFilteredValues(mMovingAverageFilterY, FILE_PATH_MAF);
+                                    writeFilteredValues(mMovingAverageFilterZ, FILE_PATH_MAF);
                                     break;
                                 case 2:
-                                    writeLPF(FILE_PATH_LPF);
+                                    writeFilteredValues(mLowPassFilterX, FILE_PATH_LPF);
+                                    writeFilteredValues(mLowPassFilterY, FILE_PATH_LPF);
+                                    writeFilteredValues(mLowPassFilterZ, FILE_PATH_LPF);
                                     break;
                                 case 3:
-                                    writeMF(FILE_PATH_MF);
+                                    writeFilteredValues(mMedianFilterX, FILE_PATH_MF);
+                                    writeFilteredValues(mMedianFilterY, FILE_PATH_MF);
+                                    writeFilteredValues(mMedianFilterZ, FILE_PATH_MF);
                                     break;
                                 case 4:
-                                    writeABF(FILE_PATH_ABF);
+                                    writeFilteredValues(mAlphaBetaFilterX,FILE_PATH_ABF);
+                                    writeFilteredValues(mAlphaBetaFilterY,FILE_PATH_ABF);
+                                    writeFilteredValues(mAlphaBetaFilterZ,FILE_PATH_ABF);
                                     break;
                                 case -1:
                                     break;
@@ -465,7 +485,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void writeMAF(String path) {
+    public void writeFilteredValues(FilterInterface filter, String path) {
         File file = new File(path);
         FileWriter fr = null;
         BufferedWriter br = null;
@@ -476,95 +496,11 @@ public class MainActivity extends AppCompatActivity {
             br.newLine();
             br.append(String.valueOf(sensTime));
             br.append(',');
-            br.append(String.valueOf(mMovingAverageFilterX.update(valuesAccel[0])));
+            br.append(String.valueOf(filter.update(valuesAccel[0])));
             br.append(',');
-            br.append(String.valueOf(mMovingAverageFilterY.update(valuesAccel[1])));
+            br.append(String.valueOf(filter.update(valuesAccel[1])));
             br.append(',');
-            br.append(String.valueOf(mMovingAverageFilterZ.update(valuesAccel[2])));
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                br.close();
-                fr.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void writeLPF(String path) {
-        File file = new File(path);
-        FileWriter fr = null;
-        BufferedWriter br = null;
-
-        try {
-            fr = new FileWriter(file, true);
-            br = new BufferedWriter(fr);
-            br.newLine();
-            br.append(String.valueOf(sensTime));
-            br.append(',');
-            br.append(String.valueOf(mLowPassFilterX.update(valuesAccel[0])));
-            br.append(',');
-            br.append(String.valueOf(mLowPassFilterY.update(valuesAccel[1])));
-            br.append(',');
-            br.append(String.valueOf(mLowPassFilterZ.update(valuesAccel[2])));
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                br.close();
-                fr.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void writeABF(String path) {
-        File file = new File(path);
-        FileWriter fr = null;
-        BufferedWriter br = null;
-
-        try {
-            fr = new FileWriter(file, true);
-            br = new BufferedWriter(fr);
-            br.newLine();
-            br.append(String.valueOf(sensTime));
-            br.append(',');
-            br.append(String.valueOf(mAlphaBetaFilterX.update(valuesAccel[0])));
-            br.append(',');
-            br.append(String.valueOf(mAlphaBetaFilterY.update(valuesAccel[1])));
-            br.append(',');
-            br.append(String.valueOf(mAlphaBetaFilterZ.update(valuesAccel[2])));
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                br.close();
-                fr.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void writeMF(String path) {
-        File file = new File(path);
-        FileWriter fr = null;
-        BufferedWriter br = null;
-
-        try {
-            fr = new FileWriter(file, true);
-            br = new BufferedWriter(fr);
-            br.newLine();
-            br.append(String.valueOf(sensTime));
-            br.append(',');
-            br.append(String.valueOf(mMedianFilterX.update(valuesAccel[0])));
-            br.append(',');
-            br.append(String.valueOf(mMedianFilterY.update(valuesAccel[1])));
-            br.append(',');
-            br.append(String.valueOf(mMedianFilterZ.update(valuesAccel[2])));
+            br.append(String.valueOf(filter.update(valuesAccel[2])));
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

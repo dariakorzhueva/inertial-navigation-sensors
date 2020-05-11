@@ -1,6 +1,6 @@
 package com.korzhueva.android.inertialnavigation.filters;
 
-public class LowPassFilter {
+public class LowPassFilter implements FilterInterface{
     private double alpha = 0;
     private double prev = 0;
     private boolean begin = true;

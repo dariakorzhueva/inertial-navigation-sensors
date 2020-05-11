@@ -1,6 +1,6 @@
 package com.korzhueva.android.inertialnavigation.filters;
 
-public class AlphaBetaFilter {
+public class AlphaBetaFilter implements FilterInterface{
     private double dt = 0.5;
     private double ak1 = 0, jk1 = 0, a = 0.85, b = 0.005;
     private double ak, jk, rk;
