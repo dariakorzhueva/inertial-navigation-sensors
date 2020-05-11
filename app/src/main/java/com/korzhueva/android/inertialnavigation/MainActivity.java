@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
                     }, 5000);
 
                     String filename = FILE_PATH;
-                    filename = filename.replaceFirst(".*/(\\w+)","$1");
+                    filename = filename.replaceFirst(".*/(\\w+)", "$1");
 
                     Snackbar.make(v, "Началась запись в файл " + filename, Snackbar.LENGTH_LONG).show();
                 } else {
@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
                     mAlphaBetaFilterZ.reset();
 
                     String filename = FILE_PATH;
-                    filename = filename.replaceFirst(".*/(\\w+)","$1");
+                    filename = filename.replaceFirst(".*/(\\w+)", "$1");
 
                     Snackbar.make(v, "Приостановлена запись в файл " + filename, Snackbar.LENGTH_LONG)
                             .setActionTextColor(Color.GREEN)
@@ -397,41 +397,25 @@ public class MainActivity extends AppCompatActivity {
 
                             switch (flagFilter) {
                                 case 0:
-                                    writeFilteredValues(mMovingAverageFilterX, FILE_PATH_MAF);
-                                    writeFilteredValues(mMovingAverageFilterY, FILE_PATH_MAF);
-                                    writeFilteredValues(mMovingAverageFilterZ, FILE_PATH_MAF);
+                                    writeFilteredValues(mMovingAverageFilterX, mMovingAverageFilterY, mMovingAverageFilterZ, FILE_PATH_MAF);
 
-                                    writeFilteredValues(mLowPassFilterX, FILE_PATH_LPF);
-                                    writeFilteredValues(mLowPassFilterY, FILE_PATH_LPF);
-                                    writeFilteredValues(mLowPassFilterZ, FILE_PATH_LPF);
+                                    writeFilteredValues(mLowPassFilterX, mLowPassFilterY, mLowPassFilterZ, FILE_PATH_LPF);
 
-                                    writeFilteredValues(mMedianFilterX, FILE_PATH_MF);
-                                    writeFilteredValues(mMedianFilterY, FILE_PATH_MF);
-                                    writeFilteredValues(mMedianFilterZ, FILE_PATH_MF);
+                                    writeFilteredValues(mMedianFilterX, mMedianFilterY, mMedianFilterZ, FILE_PATH_MF);
 
-                                    writeFilteredValues(mAlphaBetaFilterX,FILE_PATH_ABF);
-                                    writeFilteredValues(mAlphaBetaFilterY,FILE_PATH_ABF);
-                                    writeFilteredValues(mAlphaBetaFilterZ,FILE_PATH_ABF);
+                                    writeFilteredValues(mAlphaBetaFilterX, mAlphaBetaFilterY, mAlphaBetaFilterZ, FILE_PATH_ABF);
                                     break;
                                 case 1:
-                                    writeFilteredValues(mMovingAverageFilterX, FILE_PATH_MAF);
-                                    writeFilteredValues(mMovingAverageFilterY, FILE_PATH_MAF);
-                                    writeFilteredValues(mMovingAverageFilterZ, FILE_PATH_MAF);
+                                    writeFilteredValues(mMovingAverageFilterX, mMovingAverageFilterY, mMovingAverageFilterZ, FILE_PATH_MAF);
                                     break;
                                 case 2:
-                                    writeFilteredValues(mLowPassFilterX, FILE_PATH_LPF);
-                                    writeFilteredValues(mLowPassFilterY, FILE_PATH_LPF);
-                                    writeFilteredValues(mLowPassFilterZ, FILE_PATH_LPF);
+                                    writeFilteredValues(mLowPassFilterX, mLowPassFilterY, mLowPassFilterZ, FILE_PATH_LPF);
                                     break;
                                 case 3:
-                                    writeFilteredValues(mMedianFilterX, FILE_PATH_MF);
-                                    writeFilteredValues(mMedianFilterY, FILE_PATH_MF);
-                                    writeFilteredValues(mMedianFilterZ, FILE_PATH_MF);
+                                    writeFilteredValues(mMedianFilterX, mMedianFilterY, mMedianFilterZ, FILE_PATH_MF);
                                     break;
                                 case 4:
-                                    writeFilteredValues(mAlphaBetaFilterX,FILE_PATH_ABF);
-                                    writeFilteredValues(mAlphaBetaFilterY,FILE_PATH_ABF);
-                                    writeFilteredValues(mAlphaBetaFilterZ,FILE_PATH_ABF);
+                                    writeFilteredValues(mAlphaBetaFilterX, mAlphaBetaFilterY, mAlphaBetaFilterZ, FILE_PATH_ABF);
                                     break;
                                 case -1:
                                     break;
@@ -499,7 +483,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void writeFilteredValues(FilterInterface filter, String path) {
+    public void writeFilteredValues(FilterInterface filterX, FilterInterface filterY, FilterInterface filterZ, String path) {
         File file = new File(path);
         FileWriter fr = null;
         BufferedWriter br = null;
@@ -510,12 +494,11 @@ public class MainActivity extends AppCompatActivity {
             br.newLine();
             br.append(String.valueOf(sensTime));
             br.append(',');
-            br.append(String.valueOf(filter.update(valuesAccel[0])));
+            br.append(String.valueOf(filterX.update(valuesAccel[0])));
             br.append(',');
-            br.append(String.valueOf(filter.update(valuesAccel[1])));
+            br.append(String.valueOf(filterY.update(valuesAccel[1])));
             br.append(',');
-            br.append(String.valueOf(filter.update(valuesAccel[2])));
-            br.newLine();
+            br.append(String.valueOf(filterZ.update(valuesAccel[2])));
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
