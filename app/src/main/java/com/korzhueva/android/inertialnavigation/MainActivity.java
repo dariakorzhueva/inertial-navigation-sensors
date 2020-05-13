@@ -470,6 +470,7 @@ public class MainActivity extends AppCompatActivity {
 //            br.append(String.valueOf(valuesMag[1]));
 //            br.append(',');
 //            br.append(String.valueOf(valuesMag[2]));
+            br.newLine();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
