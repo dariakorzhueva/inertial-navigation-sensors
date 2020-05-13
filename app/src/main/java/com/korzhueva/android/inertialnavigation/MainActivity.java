@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
                     handler.postDelayed(new Runnable() {
                         public void run() {
                             flagCalibration = false;
-                            writeLine(FILE_PATH, "Start of motion recording");
+                            writeLine(FILE_PATH, "\nStart of motion recording");
                             createTableHead(FILE_PATH);
                             Uri notify = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                             Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notify);
@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
 
                     flagStatus = false;
 
-                    writeLine(FILE_PATH, "Stop of motion recording");
+                    writeLine(FILE_PATH, "\nStop of motion recording");
 
                     mMovingAverageFilterX.reset();
                     mMovingAverageFilterY.reset();
@@ -470,7 +470,6 @@ public class MainActivity extends AppCompatActivity {
 //            br.append(String.valueOf(valuesMag[1]));
 //            br.append(',');
 //            br.append(String.valueOf(valuesMag[2]));
-            br.newLine();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
