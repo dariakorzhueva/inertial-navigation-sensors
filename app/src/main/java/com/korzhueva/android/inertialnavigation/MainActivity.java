@@ -45,20 +45,18 @@ import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
     Button startButton;
-
     TextView tvTime;
     TextView tvAxis;
     TextView tvRotations;
-    TextView tvMagnetic;
     TextView tvFilter;
-
     ConstraintLayout mConstraintLayout;
 
     SensorManager sensorManager;
     Sensor sensorAccel;
     Sensor sensorGyro;
-    Sensor sensorMag;
     Sensor sensorLinearAccel;
+
+    // Фильтры на каждую из осей акселерометра
 
     MovingAverageFilter mMovingAverageFilterX = new MovingAverageFilter(3);
     MovingAverageFilter mMovingAverageFilterY = new MovingAverageFilter(3);
@@ -76,10 +74,46 @@ public class MainActivity extends AppCompatActivity {
     AlphaBetaFilter mAlphaBetaFilterY = new AlphaBetaFilter(0.5, 0, 0, 0.85, 0.005);
     AlphaBetaFilter mAlphaBetaFilterZ = new AlphaBetaFilter(0.5, 0, 0, 0.85, 0.005);
 
+    // Фильтры на каждую из осей линейного акселерометра
+
+    MovingAverageFilter mMovingAverageFilterLinX = new MovingAverageFilter(3);
+    MovingAverageFilter mMovingAverageFilterLinY = new MovingAverageFilter(3);
+    MovingAverageFilter mMovingAverageFilterLinZ = new MovingAverageFilter(3);
+
+    LowPassFilter mLowPassFilterLinX = new LowPassFilter(0.25);
+    LowPassFilter mLowPassFilterLinY = new LowPassFilter(0.25);
+    LowPassFilter mLowPassFilterLinZ = new LowPassFilter(0.25);
+
+    MedianFilter mMedianFilterLinX = new MedianFilter(3);
+    MedianFilter mMedianFilterLinY = new MedianFilter(3);
+    MedianFilter mMedianFilterLinZ = new MedianFilter(3);
+
+    AlphaBetaFilter mAlphaBetaFilterLinX = new AlphaBetaFilter(0.5, 0, 0, 0.85, 0.005);
+    AlphaBetaFilter mAlphaBetaFilterLinY = new AlphaBetaFilter(0.5, 0, 0, 0.85, 0.005);
+    AlphaBetaFilter mAlphaBetaFilterLinZ = new AlphaBetaFilter(0.5, 0, 0, 0.85, 0.005);
+
+    // Фильтры на каждую из осей гироскопа
+
+    MovingAverageFilter mMovingAverageFilterGyrX = new MovingAverageFilter(3);
+    MovingAverageFilter mMovingAverageFilterGyrY = new MovingAverageFilter(3);
+    MovingAverageFilter mMovingAverageFilterGyrZ = new MovingAverageFilter(3);
+
+    LowPassFilter mLowPassFilterGyrX = new LowPassFilter(0.25);
+    LowPassFilter mLowPassFilterGyrY = new LowPassFilter(0.25);
+    LowPassFilter mLowPassFilterGyrZ = new LowPassFilter(0.25);
+
+    MedianFilter mMedianFilterGyrX = new MedianFilter(3);
+    MedianFilter mMedianFilterGyrY = new MedianFilter(3);
+    MedianFilter mMedianFilterGyrZ = new MedianFilter(3);
+
+    AlphaBetaFilter mAlphaBetaFilterGyrX = new AlphaBetaFilter(0.5, 0, 0, 0.85, 0.005);
+    AlphaBetaFilter mAlphaBetaFilterGyrY = new AlphaBetaFilter(0.5, 0, 0, 0.85, 0.005);
+    AlphaBetaFilter mAlphaBetaFilterGyrZ = new AlphaBetaFilter(0.5, 0, 0, 0.85, 0.005);
+
     Date currentDate = new Date();
     DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH-mm-ss");
     private double mInitTime;
-    private double sensTime;
+    private double sensTime = 0;
     Timer timer;
 
     private static String FILE_NAME = "sensorsValues";
@@ -119,7 +153,6 @@ public class MainActivity extends AppCompatActivity {
         tvAxis = (TextView) findViewById(R.id.tv_axis);
         tvRotations = (TextView) findViewById(R.id.tv_rotations);
         tvFilter = (TextView) findViewById(R.id.tv_filter);
-        //tvMagnetic = (TextView) findViewById(R.id.tv_magnetic);
 
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
                     handler.postDelayed(new Runnable() {
                         public void run() {
                             flagCalibration = false;
+                            sensTime = 0;
                             writeLine(FILE_PATH, "\nStart of motion recording");
                             createTableHead(FILE_PATH);
                             Uri notify = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -200,6 +234,38 @@ public class MainActivity extends AppCompatActivity {
                     mAlphaBetaFilterY.reset();
                     mAlphaBetaFilterZ.reset();
 
+                    mMovingAverageFilterLinX.reset();
+                    mMovingAverageFilterLinY.reset();
+                    mMovingAverageFilterLinZ.reset();
+
+                    mLowPassFilterLinX.reset();
+                    mLowPassFilterLinY.reset();
+                    mLowPassFilterLinZ.reset();
+
+                    mMedianFilterLinX.reset();
+                    mMedianFilterLinY.reset();
+                    mMedianFilterLinZ.reset();
+
+                    mAlphaBetaFilterLinX.reset();
+                    mAlphaBetaFilterLinY.reset();
+                    mAlphaBetaFilterLinZ.reset();
+
+                    mMovingAverageFilterGyrX.reset();
+                    mMovingAverageFilterGyrY.reset();
+                    mMovingAverageFilterGyrZ.reset();
+
+                    mLowPassFilterGyrX.reset();
+                    mLowPassFilterGyrY.reset();
+                    mLowPassFilterGyrZ.reset();
+
+                    mMedianFilterGyrX.reset();
+                    mMedianFilterGyrY.reset();
+                    mMedianFilterGyrZ.reset();
+
+                    mAlphaBetaFilterGyrX.reset();
+                    mAlphaBetaFilterGyrY.reset();
+                    mAlphaBetaFilterGyrZ.reset();
+
                     String filename = FILE_PATH;
                     filename = filename.replaceFirst(".*/(\\w+)", "$1");
 
@@ -222,7 +288,6 @@ public class MainActivity extends AppCompatActivity {
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sensorAccel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorGyro = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        //sensorMag = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         sensorLinearAccel = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
     }
 
@@ -291,7 +356,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    // Открытие CSV файла
     private void openCSVFile(String path) {
         Uri selectedUri = Uri.parse(path);
         Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -300,10 +365,12 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+
     private double getDeltaT() {
         return System.currentTimeMillis() - mInitTime;
     }
 
+    // Запись строки в файл
     public void writeLine(String path, String line) {
         try {
             File file = new File(path);
@@ -330,6 +397,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Создание «шапки» таблицы
     public void createTableHead(String path) {
         File file = new File(path);
         FileWriter fr = null;
@@ -357,12 +425,6 @@ public class MainActivity extends AppCompatActivity {
             br.append("gRotY (rad/s)");
             br.append(",");
             br.append("gRotZ (rad/s)");
-//            br.append(",");
-//            br.append("magX (mT)");
-//            br.append(",");
-//            br.append("magY (mT)");
-//            br.append(",");
-//            br.append("magZ (mT)");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -381,7 +443,6 @@ public class MainActivity extends AppCompatActivity {
         sensorManager.registerListener(listener, sensorAccel,
                 SensorManager.SENSOR_DELAY_FASTEST);
         sensorManager.registerListener(listener, sensorGyro, SensorManager.SENSOR_DELAY_FASTEST);
-        //sensorManager.registerListener(listener, sensorMag, SensorManager.SENSOR_DELAY_FASTEST);
         sensorManager.registerListener(listener, sensorLinearAccel, SensorManager.SENSOR_DELAY_FASTEST);
 
         timer = new Timer();
@@ -392,36 +453,55 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         if (flagStatus) {
-                            sensTime = getDeltaT() / 1000;
                             writeValues(FILE_PATH);
 
                             switch (flagFilter) {
                                 case 0:
-                                    writeFilteredValues(mMovingAverageFilterX, mMovingAverageFilterY, mMovingAverageFilterZ, FILE_PATH_MAF);
+                                    writeFilteredValues(mMovingAverageFilterX, mMovingAverageFilterY, mMovingAverageFilterZ,
+                                            mMovingAverageFilterLinX, mMovingAverageFilterLinY, mMovingAverageFilterLinZ,
+                                            mMovingAverageFilterGyrX, mMovingAverageFilterGyrY, mMovingAverageFilterGyrZ,
+                                            FILE_PATH_MAF);
 
-                                    writeFilteredValues(mLowPassFilterX, mLowPassFilterY, mLowPassFilterZ, FILE_PATH_LPF);
+                                    writeFilteredValues(mLowPassFilterX, mLowPassFilterY, mLowPassFilterZ,
+                                            mLowPassFilterLinX, mLowPassFilterLinY, mLowPassFilterLinZ,
+                                            mLowPassFilterGyrX, mLowPassFilterGyrY, mLowPassFilterGyrZ, FILE_PATH_LPF);
 
-                                    writeFilteredValues(mMedianFilterX, mMedianFilterY, mMedianFilterZ, FILE_PATH_MF);
+                                    writeFilteredValues(mMedianFilterX, mMedianFilterY, mMedianFilterZ,
+                                            mMedianFilterLinX, mMedianFilterLinY, mMedianFilterLinZ,
+                                            mMedianFilterGyrX, mMedianFilterGyrY, mMedianFilterGyrZ, FILE_PATH_MF);
 
-                                    writeFilteredValues(mAlphaBetaFilterX, mAlphaBetaFilterY, mAlphaBetaFilterZ, FILE_PATH_ABF);
+                                    writeFilteredValues(mAlphaBetaFilterX, mAlphaBetaFilterY, mAlphaBetaFilterZ,
+                                            mAlphaBetaFilterLinX, mAlphaBetaFilterLinY, mAlphaBetaFilterLinZ,
+                                            mAlphaBetaFilterGyrX, mAlphaBetaFilterGyrY, mAlphaBetaFilterGyrZ,FILE_PATH_ABF);
                                     break;
                                 case 1:
-                                    writeFilteredValues(mMovingAverageFilterX, mMovingAverageFilterY, mMovingAverageFilterZ, FILE_PATH_MAF);
+                                    writeFilteredValues(mMovingAverageFilterX, mMovingAverageFilterY, mMovingAverageFilterZ,
+                                            mMovingAverageFilterLinX, mMovingAverageFilterLinY, mMovingAverageFilterLinZ,
+                                            mMovingAverageFilterGyrX, mMovingAverageFilterGyrY, mMovingAverageFilterGyrZ,
+                                            FILE_PATH_MAF);
                                     break;
                                 case 2:
-                                    writeFilteredValues(mLowPassFilterX, mLowPassFilterY, mLowPassFilterZ, FILE_PATH_LPF);
+                                    writeFilteredValues(mLowPassFilterX, mLowPassFilterY, mLowPassFilterZ,
+                                            mLowPassFilterLinX, mLowPassFilterLinY, mLowPassFilterLinZ,
+                                            mLowPassFilterGyrX, mLowPassFilterGyrY, mLowPassFilterGyrZ, FILE_PATH_LPF);
                                     break;
                                 case 3:
-                                    writeFilteredValues(mMedianFilterX, mMedianFilterY, mMedianFilterZ, FILE_PATH_MF);
+                                    writeFilteredValues(mMedianFilterX, mMedianFilterY, mMedianFilterZ,
+                                            mMedianFilterLinX, mMedianFilterLinY, mMedianFilterLinZ,
+                                            mMedianFilterGyrX, mMedianFilterGyrY, mMedianFilterGyrZ, FILE_PATH_MF);
                                     break;
                                 case 4:
-                                    writeFilteredValues(mAlphaBetaFilterX, mAlphaBetaFilterY, mAlphaBetaFilterZ, FILE_PATH_ABF);
+                                    writeFilteredValues(mAlphaBetaFilterX, mAlphaBetaFilterY, mAlphaBetaFilterZ,
+                                            mAlphaBetaFilterLinX, mAlphaBetaFilterLinY, mAlphaBetaFilterLinZ,
+                                            mAlphaBetaFilterGyrX, mAlphaBetaFilterGyrY, mAlphaBetaFilterGyrZ,FILE_PATH_ABF);
                                     break;
                                 case -1:
                                     break;
                             }
 
                             showInfo();
+
+                            sensTime += 0.2;
                         }
                     }
                 });
@@ -437,6 +517,7 @@ public class MainActivity extends AppCompatActivity {
         timer.cancel();
     }
 
+    // Запись значениай датчиков в файл
     public void writeValues(String path) {
         File file = new File(path);
         FileWriter fr = null;
@@ -464,12 +545,6 @@ public class MainActivity extends AppCompatActivity {
             br.append(String.valueOf(valuesGyro[1]));
             br.append(',');
             br.append(String.valueOf(valuesGyro[2]));
-//            br.append(',');
-//            br.append(String.valueOf(valuesMag[0]));
-//            br.append(',');
-//            br.append(String.valueOf(valuesMag[1]));
-//            br.append(',');
-//            br.append(String.valueOf(valuesMag[2]));
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -483,7 +558,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void writeFilteredValues(FilterInterface filterX, FilterInterface filterY, FilterInterface filterZ, String path) {
+    // Запись фильтрованных значений в файл
+    public void writeFilteredValues(FilterInterface filterX, FilterInterface filterY, FilterInterface filterZ,
+                                    FilterInterface filterLinX, FilterInterface filterLinY, FilterInterface filterLinZ,
+                                    FilterInterface filterGyrX, FilterInterface filterGyrY, FilterInterface filterGyrZ, String path) {
         File file = new File(path);
         FileWriter fr = null;
         BufferedWriter br = null;
@@ -499,6 +577,18 @@ public class MainActivity extends AppCompatActivity {
             br.append(String.valueOf(filterY.update(valuesAccel[1])));
             br.append(',');
             br.append(String.valueOf(filterZ.update(valuesAccel[2])));
+            br.append(',');
+            br.append(String.valueOf(filterLinX.update(valuesLinear[0])));
+            br.append(',');
+            br.append(String.valueOf(filterLinY.update(valuesLinear[1])));
+            br.append(',');
+            br.append(String.valueOf(filterLinZ.update(valuesLinear[2])));
+            br.append(',');
+            br.append(String.valueOf(filterGyrX.update(valuesGyro[0])));
+            br.append(',');
+            br.append(String.valueOf(filterGyrY.update(valuesGyro[1])));
+            br.append(',');
+            br.append(String.valueOf(filterGyrZ.update(valuesGyro[2])));
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -511,26 +601,24 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Форматирование строки со значениями
     private String format(double values[]) {
         return String.format("X: %2$.8f\tY: %3$.8f\tZ: %4$.8f", sensTime, values[0], values[1],
                 values[2]);
     }
 
+    // Вывод информации на экран
     private void showInfo() {
         tvTime.setText(String.format("Время: %1$.3f\n", sensTime));
-
         tvAxis.setText("Акселерометр\n" + format(valuesAccel));
-
         tvRotations.setText("Гироскоп\n" + format(valuesGyro));
-
-        //tvMagnetic.setText("Магнитометр\n" + format(valuesMag));
     }
 
     double[] valuesAccel = new double[3];
     double[] valuesGyro = new double[3];
-    //double[] valuesMag = new double[3];
     double[] valuesLinear = new double[3];
 
+    // Инициализация слушателя датчиков
     SensorEventListener listener = new SensorEventListener() {
         @Override
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
@@ -550,11 +638,6 @@ public class MainActivity extends AppCompatActivity {
                         valuesGyro[i] = event.values[i];
                     }
                     break;
-//                case Sensor.TYPE_MAGNETIC_FIELD:
-//                    for (int i = 0; i < 3; i++) {
-//                        valuesMag[i] = event.values[i];
-//                    }
-//                    break;
                 case Sensor.TYPE_LINEAR_ACCELERATION:
                     for (int i = 0; i < 3; i++) {
                         valuesLinear[i] = event.values[i];
@@ -566,7 +649,7 @@ public class MainActivity extends AppCompatActivity {
 
     };
 
-    // Маска итогового файла: sensorsValues XXXX.XX.XX XX-XX-XX.csv
+    // Получение полного пути к файлу во внутреннем хранилище
     private String getExternalPath(String name) {
         File storage = Environment.getExternalStorageDirectory();
         name = name + " " + dateFormat.format(currentDate) + ".csv";
@@ -575,17 +658,20 @@ public class MainActivity extends AppCompatActivity {
         return path;
     }
 
+    // Проверка на доступность записи из внутреннее хранилище.
     public boolean isExternalStorageWriteable() {
         String state = Environment.getExternalStorageState();
         return Environment.MEDIA_MOUNTED.equals(state);
     }
 
+    // Проверка на доступность чтения во внутреннее хранилище
     public boolean isExternalStorageReadable() {
         String state = Environment.getExternalStorageState();
         return (Environment.MEDIA_MOUNTED.equals(state) ||
                 Environment.MEDIA_MOUNTED_READ_ONLY.equals(state));
     }
 
+    // Проверка разрешений
     private boolean checkPermissions() {
         if (!isExternalStorageReadable() || !isExternalStorageWriteable()) {
             Toast.makeText(this, "Внешнее хранилище недоступно", Toast.LENGTH_LONG).show();
@@ -600,6 +686,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    // Запрос разрешений
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
