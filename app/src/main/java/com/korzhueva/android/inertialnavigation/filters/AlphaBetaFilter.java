@@ -5,6 +5,7 @@ public class AlphaBetaFilter implements FilterInterface{
     private double ak1 = 0, jk1 = 0, a = 0.85, b = 0.005;
     private double ak, jk, rk;
 
+    // Инициализация класса
     public AlphaBetaFilter(double dt, double ak1, double jk1, double a, double b) {
         this.dt = dt;
         this.ak1 = ak1;
@@ -13,6 +14,7 @@ public class AlphaBetaFilter implements FilterInterface{
         this.b = b;
     }
 
+    // Обновление состояния фильтра
     public double update(double current) {
         ak = ak1 + (jk1 * dt);
         jk = jk1;
@@ -28,6 +30,7 @@ public class AlphaBetaFilter implements FilterInterface{
         return ak1;
     }
 
+    // Сброс состояния фильтра
     public void reset() {
         dt = 0;
         ak1 = 0;

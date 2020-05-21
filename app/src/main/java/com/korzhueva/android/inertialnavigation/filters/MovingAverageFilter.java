@@ -8,10 +8,12 @@ public class MovingAverageFilter implements FilterInterface{
     private int period;
     private double sum;
 
+    // Инициализация класса
     public MovingAverageFilter(int period) {
         this.period = period;
     }
 
+    // Обновление состояния фильтра
     public double update(double num){
         sum += num;
         windowQueue.add(num);
@@ -22,6 +24,7 @@ public class MovingAverageFilter implements FilterInterface{
         return sum / windowQueue.size();
     }
 
+    // Сброс состояния фильтра
     public void reset(){
         sum = 0;
         period = 0;

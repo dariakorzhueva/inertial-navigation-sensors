@@ -5,11 +5,13 @@ public class MedianFilter implements FilterInterface {
     private double[] values;
     private int count = 0;
 
+    // Инициализация класса
     public MedianFilter(int window) {
         this.window = window;
         this.values = new double[window];
     }
 
+    // Обновление состояния фильтра
     public double update(double current) {
         if (count >= window)
             count = 2;
@@ -27,6 +29,7 @@ public class MedianFilter implements FilterInterface {
             return current;
     }
 
+    // Сброс состояния фильтра
     private double getMiddle(double[] values) {
         double middle;
 

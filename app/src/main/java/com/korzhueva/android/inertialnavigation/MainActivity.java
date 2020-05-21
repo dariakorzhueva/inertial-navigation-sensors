@@ -70,9 +70,9 @@ public class MainActivity extends AppCompatActivity {
     MedianFilter mMedianFilterY = new MedianFilter(3);
     MedianFilter mMedianFilterZ = new MedianFilter(3);
 
-    AlphaBetaFilter mAlphaBetaFilterX = new AlphaBetaFilter(0.5, 0, 0, 0.85, 0.005);
-    AlphaBetaFilter mAlphaBetaFilterY = new AlphaBetaFilter(0.5, 0, 0, 0.85, 0.005);
-    AlphaBetaFilter mAlphaBetaFilterZ = new AlphaBetaFilter(0.5, 0, 0, 0.85, 0.005);
+    AlphaBetaFilter mAlphaBetaFilterX = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
+    AlphaBetaFilter mAlphaBetaFilterY = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
+    AlphaBetaFilter mAlphaBetaFilterZ = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
 
     // Фильтры на каждую из осей линейного акселерометра
 
@@ -88,9 +88,9 @@ public class MainActivity extends AppCompatActivity {
     MedianFilter mMedianFilterLinY = new MedianFilter(3);
     MedianFilter mMedianFilterLinZ = new MedianFilter(3);
 
-    AlphaBetaFilter mAlphaBetaFilterLinX = new AlphaBetaFilter(0.5, 0, 0, 0.85, 0.005);
-    AlphaBetaFilter mAlphaBetaFilterLinY = new AlphaBetaFilter(0.5, 0, 0, 0.85, 0.005);
-    AlphaBetaFilter mAlphaBetaFilterLinZ = new AlphaBetaFilter(0.5, 0, 0, 0.85, 0.005);
+    AlphaBetaFilter mAlphaBetaFilterLinX = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
+    AlphaBetaFilter mAlphaBetaFilterLinY = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
+    AlphaBetaFilter mAlphaBetaFilterLinZ = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
 
     // Фильтры на каждую из осей гироскопа
 
@@ -106,9 +106,9 @@ public class MainActivity extends AppCompatActivity {
     MedianFilter mMedianFilterGyrY = new MedianFilter(3);
     MedianFilter mMedianFilterGyrZ = new MedianFilter(3);
 
-    AlphaBetaFilter mAlphaBetaFilterGyrX = new AlphaBetaFilter(0.5, 0, 0, 0.85, 0.005);
-    AlphaBetaFilter mAlphaBetaFilterGyrY = new AlphaBetaFilter(0.5, 0, 0, 0.85, 0.005);
-    AlphaBetaFilter mAlphaBetaFilterGyrZ = new AlphaBetaFilter(0.5, 0, 0, 0.85, 0.005);
+    AlphaBetaFilter mAlphaBetaFilterGyrX = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
+    AlphaBetaFilter mAlphaBetaFilterGyrY = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
+    AlphaBetaFilter mAlphaBetaFilterGyrZ = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
 
     Date currentDate = new Date();
     DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH-mm-ss");
@@ -140,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
 
     private int sdk = android.os.Build.VERSION.SDK_INT;
 
+    // Первоначальная настройка Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -291,12 +292,14 @@ public class MainActivity extends AppCompatActivity {
         sensorLinearAccel = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
     }
 
+    // Создание меню
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
+    // Обработчик нажатий пунктов меню
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (!flagCalibration) {
@@ -363,11 +366,6 @@ public class MainActivity extends AppCompatActivity {
         intent.setDataAndType(selectedUri, "text/csv");
 
         startActivity(intent);
-    }
-
-
-    private double getDeltaT() {
-        return System.currentTimeMillis() - mInitTime;
     }
 
     // Запись строки в файл
@@ -472,7 +470,7 @@ public class MainActivity extends AppCompatActivity {
 
                                     writeFilteredValues(mAlphaBetaFilterX, mAlphaBetaFilterY, mAlphaBetaFilterZ,
                                             mAlphaBetaFilterLinX, mAlphaBetaFilterLinY, mAlphaBetaFilterLinZ,
-                                            mAlphaBetaFilterGyrX, mAlphaBetaFilterGyrY, mAlphaBetaFilterGyrZ,FILE_PATH_ABF);
+                                            mAlphaBetaFilterGyrX, mAlphaBetaFilterGyrY, mAlphaBetaFilterGyrZ, FILE_PATH_ABF);
                                     break;
                                 case 1:
                                     writeFilteredValues(mMovingAverageFilterX, mMovingAverageFilterY, mMovingAverageFilterZ,
@@ -493,7 +491,7 @@ public class MainActivity extends AppCompatActivity {
                                 case 4:
                                     writeFilteredValues(mAlphaBetaFilterX, mAlphaBetaFilterY, mAlphaBetaFilterZ,
                                             mAlphaBetaFilterLinX, mAlphaBetaFilterLinY, mAlphaBetaFilterLinZ,
-                                            mAlphaBetaFilterGyrX, mAlphaBetaFilterGyrY, mAlphaBetaFilterGyrZ,FILE_PATH_ABF);
+                                            mAlphaBetaFilterGyrX, mAlphaBetaFilterGyrY, mAlphaBetaFilterGyrZ, FILE_PATH_ABF);
                                     break;
                                 case -1:
                                     break;

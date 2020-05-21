@@ -5,10 +5,12 @@ public class LowPassFilter implements FilterInterface{
     private double prev = 0;
     private boolean begin = true;
 
+    // Инициализация класса
     public LowPassFilter(double coefficient) {
         this.alpha = coefficient;
     }
 
+    // Обновление состояния фильтра
     public double update(double current) {
         if(begin) {
             prev = current;
@@ -21,6 +23,7 @@ public class LowPassFilter implements FilterInterface{
         return next;
     }
 
+    // Сброс состояния фильтра
     public void reset(){
         alpha = 0;
         prev = 0;
