@@ -112,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
 
     Date currentDate = new Date();
     DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH-mm-ss");
-    private double mInitTime;
     private double sensTime = 0;
     Timer timer;
 
@@ -178,7 +177,6 @@ public class MainActivity extends AppCompatActivity {
                     startButton.setText("Стоп");
                     startButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_button_red_state));
                     tvTime.setTextColor(getResources().getColor(R.color.textColorPrimaryDark));
-                    mInitTime = System.currentTimeMillis();
 
                     writeLine(FILE_PATH, "Calibration");
                     createTableHead(FILE_PATH);
@@ -197,8 +195,6 @@ public class MainActivity extends AppCompatActivity {
                             Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notify);
                             r.play();
                             tvTime.setTextColor(getResources().getColor(R.color.colorStart));
-                            // Получение текущего времени
-                            mInitTime = System.currentTimeMillis();
                         }
                     }, 5000);
 
@@ -214,6 +210,8 @@ public class MainActivity extends AppCompatActivity {
                     startButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_button_green_state));
 
                     tvTime.setTextColor(getResources().getColor(R.color.colorStop));
+
+                    tvFilter.setText("Запись приостановлена");
 
                     flagStatus = false;
 
