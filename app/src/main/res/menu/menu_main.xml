@@ -7,6 +7,11 @@
         android:title="@string/text_moving_average">
     </item>
     <item
+        android:id="@+id/waf"
+        app:showAsAction="ifRoom|never"
+        android:title="@string/text_weighted_average">
+    </item>
+    <item
         android:id="@+id/lpf"
         app:showAsAction="ifRoom|never"
         android:title="@string/text_low_pass">

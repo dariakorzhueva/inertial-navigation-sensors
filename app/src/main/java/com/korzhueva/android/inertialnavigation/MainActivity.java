@@ -32,6 +32,7 @@ import com.korzhueva.android.inertialnavigation.filters.FilterInterface;
 import com.korzhueva.android.inertialnavigation.filters.LowPassFilter;
 import com.korzhueva.android.inertialnavigation.filters.MedianFilter;
 import com.korzhueva.android.inertialnavigation.filters.MovingAverageFilter;
+import com.korzhueva.android.inertialnavigation.filters.WeightedAverageFilter;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -62,6 +63,10 @@ public class MainActivity extends AppCompatActivity {
     MovingAverageFilter mMovingAverageFilterY = new MovingAverageFilter(3);
     MovingAverageFilter mMovingAverageFilterZ = new MovingAverageFilter(3);
 
+    WeightedAverageFilter mWeightedAverageFilterX = new WeightedAverageFilter(3);
+    WeightedAverageFilter mWeightedAverageFilterY = new WeightedAverageFilter(3);
+    WeightedAverageFilter mWeightedAverageFilterZ = new WeightedAverageFilter(3);
+
     LowPassFilter mLowPassFilterX = new LowPassFilter(0.25);
     LowPassFilter mLowPassFilterY = new LowPassFilter(0.25);
     LowPassFilter mLowPassFilterZ = new LowPassFilter(0.25);
@@ -80,6 +85,10 @@ public class MainActivity extends AppCompatActivity {
     MovingAverageFilter mMovingAverageFilterLinY = new MovingAverageFilter(3);
     MovingAverageFilter mMovingAverageFilterLinZ = new MovingAverageFilter(3);
 
+    WeightedAverageFilter mWeightedAverageFilterLinX = new WeightedAverageFilter(3);
+    WeightedAverageFilter mWeightedAverageFilterLinY = new WeightedAverageFilter(3);
+    WeightedAverageFilter mWeightedAverageFilterLinZ = new WeightedAverageFilter(3);
+
     LowPassFilter mLowPassFilterLinX = new LowPassFilter(0.25);
     LowPassFilter mLowPassFilterLinY = new LowPassFilter(0.25);
     LowPassFilter mLowPassFilterLinZ = new LowPassFilter(0.25);
@@ -97,6 +106,10 @@ public class MainActivity extends AppCompatActivity {
     MovingAverageFilter mMovingAverageFilterGyrX = new MovingAverageFilter(3);
     MovingAverageFilter mMovingAverageFilterGyrY = new MovingAverageFilter(3);
     MovingAverageFilter mMovingAverageFilterGyrZ = new MovingAverageFilter(3);
+
+    WeightedAverageFilter mWeightedAverageFilterGyrX = new WeightedAverageFilter(3);
+    WeightedAverageFilter mWeightedAverageFilterGyrY = new WeightedAverageFilter(3);
+    WeightedAverageFilter mWeightedAverageFilterGyrZ = new WeightedAverageFilter(3);
 
     LowPassFilter mLowPassFilterGyrX = new LowPassFilter(0.25);
     LowPassFilter mLowPassFilterGyrY = new LowPassFilter(0.25);
@@ -117,12 +130,14 @@ public class MainActivity extends AppCompatActivity {
 
     private static String FILE_NAME = "sensorsValues";
     private static String FILE_NAME_MAF = "MAF";
+    private static String FILE_NAME_WAF = "WAF";
     private static String FILE_NAME_LPF = "LPF";
     private static String FILE_NAME_MF = "MF";
     private static String FILE_NAME_ABF = "ABF";
 
     private static String FILE_PATH = "";
     private static String FILE_PATH_MAF = "";
+    private static String FILE_PATH_WAF = "";
     private static String FILE_PATH_LPF = "";
     private static String FILE_PATH_MF = "";
     private static String FILE_PATH_ABF = "";
@@ -160,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
                 if (!isStart) {
                     FILE_PATH = "";
                     FILE_PATH_MAF = "";
+                    FILE_PATH_WAF = "";
                     FILE_PATH_LPF = "";
                     FILE_PATH_MF = "";
                     FILE_PATH_ABF = "";
@@ -168,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
                     FILE_PATH = getExternalPath(FILE_NAME);
 
                     FILE_PATH_MAF = getExternalPath(FILE_NAME_MAF);
+                    FILE_PATH_WAF = getExternalPath(FILE_NAME_WAF);
                     FILE_PATH_LPF = getExternalPath(FILE_NAME_LPF);
                     FILE_PATH_MF = getExternalPath(FILE_NAME_MF);
                     FILE_PATH_ABF = getExternalPath(FILE_NAME_ABF);
@@ -221,6 +238,10 @@ public class MainActivity extends AppCompatActivity {
                     mMovingAverageFilterY.reset();
                     mMovingAverageFilterZ.reset();
 
+                    mWeightedAverageFilterX.reset();
+                    mWeightedAverageFilterY.reset();
+                    mWeightedAverageFilterZ.reset();
+
                     mLowPassFilterX.reset();
                     mLowPassFilterY.reset();
                     mLowPassFilterZ.reset();
@@ -237,6 +258,10 @@ public class MainActivity extends AppCompatActivity {
                     mMovingAverageFilterLinY.reset();
                     mMovingAverageFilterLinZ.reset();
 
+                    mWeightedAverageFilterLinX.reset();
+                    mWeightedAverageFilterLinY.reset();
+                    mWeightedAverageFilterLinZ.reset();
+
                     mLowPassFilterLinX.reset();
                     mLowPassFilterLinY.reset();
                     mLowPassFilterLinZ.reset();
@@ -252,6 +277,10 @@ public class MainActivity extends AppCompatActivity {
                     mMovingAverageFilterGyrX.reset();
                     mMovingAverageFilterGyrY.reset();
                     mMovingAverageFilterGyrZ.reset();
+
+                    mWeightedAverageFilterGyrX.reset();
+                    mWeightedAverageFilterGyrY.reset();
+                    mWeightedAverageFilterGyrZ.reset();
 
                     mLowPassFilterGyrX.reset();
                     mLowPassFilterGyrY.reset();
@@ -309,22 +338,29 @@ public class MainActivity extends AppCompatActivity {
                     tvFilter.setText("Работает фильтр скользящего среднего");
                     Snackbar.make(mConstraintLayout, "Включен фильтр скользящего среднего", Snackbar.LENGTH_LONG).show();
                     return true;
-                case R.id.lpf:
+                case R.id.waf:
                     flagFilter = 2;
+                    writeLine(FILE_PATH_WAF, "Weighted Moving Average Filter");
+                    createTableHead(FILE_PATH_WAF);
+                    tvFilter.setText("Работает фильтр взвешенного скользящего среднего");
+                    Snackbar.make(mConstraintLayout, "Включен фильтр взвешенного скользящего среднего", Snackbar.LENGTH_LONG).show();
+                    return true;
+                case R.id.lpf:
+                    flagFilter = 3;
                     writeLine(FILE_PATH_LPF, "Low-Pass Filter");
                     createTableHead(FILE_PATH_LPF);
                     tvFilter.setText("Работает фильтр низких частот");
                     Snackbar.make(mConstraintLayout, "Включен фильтр низких частот", Snackbar.LENGTH_LONG).show();
                     return true;
                 case R.id.mf:
-                    flagFilter = 3;
+                    flagFilter = 4;
                     writeLine(FILE_PATH_MF, "Median Filter");
                     createTableHead(FILE_PATH_MF);
                     tvFilter.setText("Работает медианный фильтр");
                     Snackbar.make(mConstraintLayout, "Включен медианный фильтр", Snackbar.LENGTH_LONG).show();
                     return true;
                 case R.id.abf:
-                    flagFilter = 4;
+                    flagFilter = 5;
                     writeLine(FILE_PATH_ABF, "Alpha-Beta Filter");
                     createTableHead(FILE_PATH_ABF);
                     tvFilter.setText("Работает альфа-бета фильтр");
@@ -335,6 +371,9 @@ public class MainActivity extends AppCompatActivity {
 
                     writeLine(FILE_PATH_MAF, "Moving Average Filter");
                     createTableHead(FILE_PATH_MAF);
+
+                    writeLine(FILE_PATH_WAF, "Weighted Moving Average Filter");
+                    createTableHead(FILE_PATH_WAF);
 
                     writeLine(FILE_PATH_LPF, "Low-Pass Filter");
                     createTableHead(FILE_PATH_LPF);
@@ -458,6 +497,11 @@ public class MainActivity extends AppCompatActivity {
                                             mMovingAverageFilterGyrX, mMovingAverageFilterGyrY, mMovingAverageFilterGyrZ,
                                             FILE_PATH_MAF);
 
+                                    writeFilteredValues(mWeightedAverageFilterX, mWeightedAverageFilterY, mWeightedAverageFilterZ,
+                                            mWeightedAverageFilterLinX, mWeightedAverageFilterLinY, mWeightedAverageFilterLinZ,
+                                            mWeightedAverageFilterGyrX, mWeightedAverageFilterGyrY, mWeightedAverageFilterGyrZ,
+                                            FILE_PATH_WAF);
+
                                     writeFilteredValues(mLowPassFilterX, mLowPassFilterY, mLowPassFilterZ,
                                             mLowPassFilterLinX, mLowPassFilterLinY, mLowPassFilterLinZ,
                                             mLowPassFilterGyrX, mLowPassFilterGyrY, mLowPassFilterGyrZ, FILE_PATH_LPF);
@@ -477,16 +521,22 @@ public class MainActivity extends AppCompatActivity {
                                             FILE_PATH_MAF);
                                     break;
                                 case 2:
+                                    writeFilteredValues(mWeightedAverageFilterX, mWeightedAverageFilterY, mWeightedAverageFilterZ,
+                                            mWeightedAverageFilterLinX, mWeightedAverageFilterLinY, mWeightedAverageFilterLinZ,
+                                            mWeightedAverageFilterGyrX, mWeightedAverageFilterGyrY, mWeightedAverageFilterGyrZ,
+                                            FILE_PATH_WAF);
+                                    break;
+                                case 3:
                                     writeFilteredValues(mLowPassFilterX, mLowPassFilterY, mLowPassFilterZ,
                                             mLowPassFilterLinX, mLowPassFilterLinY, mLowPassFilterLinZ,
                                             mLowPassFilterGyrX, mLowPassFilterGyrY, mLowPassFilterGyrZ, FILE_PATH_LPF);
                                     break;
-                                case 3:
+                                case 4:
                                     writeFilteredValues(mMedianFilterX, mMedianFilterY, mMedianFilterZ,
                                             mMedianFilterLinX, mMedianFilterLinY, mMedianFilterLinZ,
                                             mMedianFilterGyrX, mMedianFilterGyrY, mMedianFilterGyrZ, FILE_PATH_MF);
                                     break;
-                                case 4:
+                                case 5:
                                     writeFilteredValues(mAlphaBetaFilterX, mAlphaBetaFilterY, mAlphaBetaFilterZ,
                                             mAlphaBetaFilterLinX, mAlphaBetaFilterLinY, mAlphaBetaFilterLinZ,
                                             mAlphaBetaFilterGyrX, mAlphaBetaFilterGyrY, mAlphaBetaFilterGyrZ, FILE_PATH_ABF);

@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Inertial Navigation</string>
     <string name="text_moving_average">MAF</string>
+    <string name="text_weighted_average">WAF</string>
     <string name="text_low_pass">LPF</string>
     <string name="text_median_filter">MF</string>
     <string name="text_alpha_beta_filter">ABF</string>
