@@ -6,6 +6,7 @@ Done:
 * Gyroscope
 * Magnetometer (remove)
 * Simple Moving Average Filter
+* Weighted Moving Average Filter
 * Low Pass Filter
 * Median Filter
 * Alpha-Beta Filter
