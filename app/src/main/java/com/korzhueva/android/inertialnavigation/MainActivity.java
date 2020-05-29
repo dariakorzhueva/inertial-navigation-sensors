@@ -58,70 +58,67 @@ public class MainActivity extends AppCompatActivity {
     Sensor sensorLinearAccel;
 
     // Фильтры на каждую из осей акселерометра
+    MovingAverageFilter mMovingAverageFilterX;
+    MovingAverageFilter mMovingAverageFilterY;
+    MovingAverageFilter mMovingAverageFilterZ;
 
-    MovingAverageFilter mMovingAverageFilterX = new MovingAverageFilter(3);
-    MovingAverageFilter mMovingAverageFilterY = new MovingAverageFilter(3);
-    MovingAverageFilter mMovingAverageFilterZ = new MovingAverageFilter(3);
+    WeightedAverageFilter mWeightedAverageFilterX;
+    WeightedAverageFilter mWeightedAverageFilterY;
+    WeightedAverageFilter mWeightedAverageFilterZ;
 
-    WeightedAverageFilter mWeightedAverageFilterX = new WeightedAverageFilter(3);
-    WeightedAverageFilter mWeightedAverageFilterY = new WeightedAverageFilter(3);
-    WeightedAverageFilter mWeightedAverageFilterZ = new WeightedAverageFilter(3);
+    LowPassFilter mLowPassFilterX;
+    LowPassFilter mLowPassFilterY;
+    LowPassFilter mLowPassFilterZ;
 
-    LowPassFilter mLowPassFilterX = new LowPassFilter(0.25);
-    LowPassFilter mLowPassFilterY = new LowPassFilter(0.25);
-    LowPassFilter mLowPassFilterZ = new LowPassFilter(0.25);
+    MedianFilter mMedianFilterX;
+    MedianFilter mMedianFilterY;
+    MedianFilter mMedianFilterZ;
 
-    MedianFilter mMedianFilterX = new MedianFilter(3);
-    MedianFilter mMedianFilterY = new MedianFilter(3);
-    MedianFilter mMedianFilterZ = new MedianFilter(3);
-
-    AlphaBetaFilter mAlphaBetaFilterX = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
-    AlphaBetaFilter mAlphaBetaFilterY = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
-    AlphaBetaFilter mAlphaBetaFilterZ = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
+    AlphaBetaFilter mAlphaBetaFilterX;
+    AlphaBetaFilter mAlphaBetaFilterY;
+    AlphaBetaFilter mAlphaBetaFilterZ;
 
     // Фильтры на каждую из осей линейного акселерометра
+    MovingAverageFilter mMovingAverageFilterLinX;
+    MovingAverageFilter mMovingAverageFilterLinY;
+    MovingAverageFilter mMovingAverageFilterLinZ;
 
-    MovingAverageFilter mMovingAverageFilterLinX = new MovingAverageFilter(3);
-    MovingAverageFilter mMovingAverageFilterLinY = new MovingAverageFilter(3);
-    MovingAverageFilter mMovingAverageFilterLinZ = new MovingAverageFilter(3);
+    WeightedAverageFilter mWeightedAverageFilterLinX;
+    WeightedAverageFilter mWeightedAverageFilterLinY;
+    WeightedAverageFilter mWeightedAverageFilterLinZ;
 
-    WeightedAverageFilter mWeightedAverageFilterLinX = new WeightedAverageFilter(3);
-    WeightedAverageFilter mWeightedAverageFilterLinY = new WeightedAverageFilter(3);
-    WeightedAverageFilter mWeightedAverageFilterLinZ = new WeightedAverageFilter(3);
+    LowPassFilter mLowPassFilterLinX;
+    LowPassFilter mLowPassFilterLinY;
+    LowPassFilter mLowPassFilterLinZ;
 
-    LowPassFilter mLowPassFilterLinX = new LowPassFilter(0.25);
-    LowPassFilter mLowPassFilterLinY = new LowPassFilter(0.25);
-    LowPassFilter mLowPassFilterLinZ = new LowPassFilter(0.25);
+    MedianFilter mMedianFilterLinX;
+    MedianFilter mMedianFilterLinY;
+    MedianFilter mMedianFilterLinZ;
 
-    MedianFilter mMedianFilterLinX = new MedianFilter(3);
-    MedianFilter mMedianFilterLinY = new MedianFilter(3);
-    MedianFilter mMedianFilterLinZ = new MedianFilter(3);
-
-    AlphaBetaFilter mAlphaBetaFilterLinX = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
-    AlphaBetaFilter mAlphaBetaFilterLinY = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
-    AlphaBetaFilter mAlphaBetaFilterLinZ = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
+    AlphaBetaFilter mAlphaBetaFilterLinX;
+    AlphaBetaFilter mAlphaBetaFilterLinY;
+    AlphaBetaFilter mAlphaBetaFilterLinZ;
 
     // Фильтры на каждую из осей гироскопа
+    MovingAverageFilter mMovingAverageFilterGyrX;
+    MovingAverageFilter mMovingAverageFilterGyrY;
+    MovingAverageFilter mMovingAverageFilterGyrZ;
 
-    MovingAverageFilter mMovingAverageFilterGyrX = new MovingAverageFilter(3);
-    MovingAverageFilter mMovingAverageFilterGyrY = new MovingAverageFilter(3);
-    MovingAverageFilter mMovingAverageFilterGyrZ = new MovingAverageFilter(3);
+    WeightedAverageFilter mWeightedAverageFilterGyrX;
+    WeightedAverageFilter mWeightedAverageFilterGyrY;
+    WeightedAverageFilter mWeightedAverageFilterGyrZ;
 
-    WeightedAverageFilter mWeightedAverageFilterGyrX = new WeightedAverageFilter(3);
-    WeightedAverageFilter mWeightedAverageFilterGyrY = new WeightedAverageFilter(3);
-    WeightedAverageFilter mWeightedAverageFilterGyrZ = new WeightedAverageFilter(3);
+    LowPassFilter mLowPassFilterGyrX;
+    LowPassFilter mLowPassFilterGyrY;
+    LowPassFilter mLowPassFilterGyrZ;
 
-    LowPassFilter mLowPassFilterGyrX = new LowPassFilter(0.25);
-    LowPassFilter mLowPassFilterGyrY = new LowPassFilter(0.25);
-    LowPassFilter mLowPassFilterGyrZ = new LowPassFilter(0.25);
+    MedianFilter mMedianFilterGyrX;
+    MedianFilter mMedianFilterGyrY;
+    MedianFilter mMedianFilterGyrZ;
 
-    MedianFilter mMedianFilterGyrX = new MedianFilter(3);
-    MedianFilter mMedianFilterGyrY = new MedianFilter(3);
-    MedianFilter mMedianFilterGyrZ = new MedianFilter(3);
-
-    AlphaBetaFilter mAlphaBetaFilterGyrX = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
-    AlphaBetaFilter mAlphaBetaFilterGyrY = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
-    AlphaBetaFilter mAlphaBetaFilterGyrZ = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
+    AlphaBetaFilter mAlphaBetaFilterGyrX;
+    AlphaBetaFilter mAlphaBetaFilterGyrY;
+    AlphaBetaFilter mAlphaBetaFilterGyrZ;
 
     Date currentDate = new Date();
     DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH-mm-ss");
@@ -173,6 +170,68 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!isStart) {
+                    sensTime = 0;
+
+                    mMovingAverageFilterX = new MovingAverageFilter(3);
+                    mMovingAverageFilterY = new MovingAverageFilter(3);
+                    mMovingAverageFilterZ = new MovingAverageFilter(3);
+
+                    mWeightedAverageFilterX = new WeightedAverageFilter(3);
+                    mWeightedAverageFilterY = new WeightedAverageFilter(3);
+                    mWeightedAverageFilterZ = new WeightedAverageFilter(3);
+
+                    mLowPassFilterX = new LowPassFilter(0.25);
+                    mLowPassFilterY = new LowPassFilter(0.25);
+                    mLowPassFilterZ = new LowPassFilter(0.25);
+
+                    mMedianFilterX = new MedianFilter(3);
+                    mMedianFilterY = new MedianFilter(3);
+                    mMedianFilterZ = new MedianFilter(3);
+
+                    mAlphaBetaFilterX = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
+                    mAlphaBetaFilterY = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
+                    mAlphaBetaFilterZ = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
+
+                    mMovingAverageFilterLinX = new MovingAverageFilter(3);
+                    mMovingAverageFilterLinY = new MovingAverageFilter(3);
+                    mMovingAverageFilterLinZ = new MovingAverageFilter(3);
+
+                    mWeightedAverageFilterLinX = new WeightedAverageFilter(3);
+                    mWeightedAverageFilterLinY = new WeightedAverageFilter(3);
+                    mWeightedAverageFilterLinZ = new WeightedAverageFilter(3);
+
+                    mLowPassFilterLinX = new LowPassFilter(0.25);
+                    mLowPassFilterLinY = new LowPassFilter(0.25);
+                    mLowPassFilterLinZ = new LowPassFilter(0.25);
+
+                    mMedianFilterLinX = new MedianFilter(3);
+                    mMedianFilterLinY = new MedianFilter(3);
+                    mMedianFilterLinZ = new MedianFilter(3);
+
+                    mAlphaBetaFilterLinX = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
+                    mAlphaBetaFilterLinY = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
+                    mAlphaBetaFilterLinZ = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
+
+                    mMovingAverageFilterGyrX = new MovingAverageFilter(3);
+                    mMovingAverageFilterGyrY = new MovingAverageFilter(3);
+                    mMovingAverageFilterGyrZ = new MovingAverageFilter(3);
+
+                    mWeightedAverageFilterGyrX = new WeightedAverageFilter(3);
+                    mWeightedAverageFilterGyrY = new WeightedAverageFilter(3);
+                    mWeightedAverageFilterGyrZ = new WeightedAverageFilter(3);
+
+                    mLowPassFilterGyrX = new LowPassFilter(0.25);
+                    mLowPassFilterGyrY = new LowPassFilter(0.25);
+                    mLowPassFilterGyrZ = new LowPassFilter(0.25);
+
+                    mMedianFilterGyrX = new MedianFilter(3);
+                    mMedianFilterGyrY = new MedianFilter(3);
+                    mMedianFilterGyrZ = new MedianFilter(3);
+
+                    mAlphaBetaFilterGyrX = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
+                    mAlphaBetaFilterGyrY = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
+                    mAlphaBetaFilterGyrZ = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
+
                     FILE_PATH = "";
                     FILE_PATH_MAF = "";
                     FILE_PATH_WAF = "";
@@ -221,6 +280,7 @@ public class MainActivity extends AppCompatActivity {
                     Snackbar.make(v, "Началась запись в файл " + filename, Snackbar.LENGTH_LONG).show();
                 } else {
                     isStart = false;
+                    flagFilter = -1;
 
                     startButton.setText("Старт");
 
