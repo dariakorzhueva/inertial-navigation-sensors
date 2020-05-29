@@ -1,12 +1,11 @@
 package com.korzhueva.android.inertialnavigation.filters;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.ArrayList;
 
 public class MovingAverageFilter implements FilterInterface{
-    private final Queue<Double> windowQueue = new LinkedList<Double>();
-    private int period;
-    private double sum;
+    private final ArrayList<Double> windowQueue = new ArrayList<Double>();
+    private int period = 0;
+    private double sum = 0;
 
     // Инициализация класса
     public MovingAverageFilter(int period) {
@@ -18,7 +17,7 @@ public class MovingAverageFilter implements FilterInterface{
         sum += num;
         windowQueue.add(num);
         if (windowQueue.size() > period) {
-            sum -= windowQueue.remove();
+            sum -= windowQueue.remove(0);
         }
 
         return sum / windowQueue.size();
@@ -30,5 +29,4 @@ public class MovingAverageFilter implements FilterInterface{
         period = 0;
         windowQueue.clear();
     }
-
 }
