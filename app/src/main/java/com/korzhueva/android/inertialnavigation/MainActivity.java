@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
 
                     mAlphaBetaFilterX = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
                     mAlphaBetaFilterY = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
-                    mAlphaBetaFilterZ = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
+                    mAlphaBetaFilterZ = new AlphaBetaFilter(0.2, 9.8, 0, 0.15, 0.005);
 
                     mMovingAverageFilterLinX = new MovingAverageFilter(3);
                     mMovingAverageFilterLinY = new MovingAverageFilter(3);
@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
 
                     mAlphaBetaFilterLinX = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
                     mAlphaBetaFilterLinY = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
-                    mAlphaBetaFilterLinZ = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
+                    mAlphaBetaFilterLinZ = new AlphaBetaFilter(0.2, 9.8, 0, 0.15, 0.005);
 
                     mMovingAverageFilterGyrX = new MovingAverageFilter(3);
                     mMovingAverageFilterGyrY = new MovingAverageFilter(3);
@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
 
                     mAlphaBetaFilterGyrX = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
                     mAlphaBetaFilterGyrY = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
-                    mAlphaBetaFilterGyrZ = new AlphaBetaFilter(0.2, 0, 0, 0.15, 0.005);
+                    mAlphaBetaFilterGyrZ = new AlphaBetaFilter(0.2, 9.8, 0, 0.15, 0.005);
 
                     FILE_PATH = "";
                     FILE_PATH_MAF = "";
