@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     Button startButton;
     TextView tvTime;
     TextView tvAxis;
+    TextView tvLinear;
     TextView tvRotations;
     TextView tvFilter;
     ConstraintLayout mConstraintLayout;
@@ -163,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
         tvTime = (TextView) findViewById(R.id.tv_time);
         tvTime.setText(String.format("Время: %1$.3f\n", sensTime));
         tvAxis = (TextView) findViewById(R.id.tv_axis);
+        tvLinear = (TextView) findViewById(R.id.tv_linear);
         tvRotations = (TextView) findViewById(R.id.tv_rotations);
         tvFilter = (TextView) findViewById(R.id.tv_filter);
 
@@ -717,6 +719,7 @@ public class MainActivity extends AppCompatActivity {
     private void showInfo() {
         tvTime.setText(String.format("Время: %1$.3f\n", sensTime));
         tvAxis.setText("Акселерометр\n" + format(valuesAccel));
+        tvLinear.setText("Линейный акселерометр\n" + format(valuesLinear));
         tvRotations.setText("Гироскоп\n" + format(valuesGyro));
     }
 
